@@ -2,6 +2,7 @@
 Definition of views.
 """
 
+from asyncio.windows_events import NULL
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -100,6 +101,17 @@ def tickets(request):
         for p in ticketsw:
             listofticketsw.append(p.name_ticket + ' - ' + str(p.window_id))
     return JsonResponse({'listoftickets': listoftickets, 'listofticketsw': listofticketsw}, status=200)
+
+def ticketscall(request):
+    t = datetime.now()
+    if Tickets.objects.filter(time_create__contains = t.date()).exclude(window_id = None).filter(time_call__gt = t - timedelta(seconds=10)).exists():
+       ticketsc = Tickets.objects.filter(time_create__contains = t.date()).exclude(window_id = None).filter(time_call__gt = t - timedelta(seconds=10))
+       ticketc = ticketsc.earliest('time_call')
+       jsonticket = json.dumps({ticketc.name_ticket: str(ticketc.window_id)})
+       return JsonResponse({ticketc.name_ticket.replace(' ', ''): str(ticketc.window_id)}, status=200)
+    else:
+       return JsonResponse({}, status=200)
+
 
 # Основная страница
 @login_required
@@ -685,27 +697,29 @@ def statisticstableall(request):
         for ser in service:
             if ser['status'] == True:
                 services.append(ser['rusname'])
-        t = datetime.now().date()
-        select_time = '2023'
+        if request.GET.get('date') is None:
+            t = datetime.now().strftime("%Y")
+        else:
+            t = request.GET.get('date')
         nt = []
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '01').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '02').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '03').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '04').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '05').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '06').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '07').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '08').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '09').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '10').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '11').count())
-        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '12').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '01').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '02').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '03').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '04').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '05').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '06').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '07').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '08').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '09').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '10').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '11').count())
+        nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '12').count())
         
         stc = []
         stat = []
         for s in services:
-           stc.append (Tickets.objects.filter(time_create__contains = select_time).filter(service=s).count())
-           temp = Tickets.objects.filter(time_create__contains = select_time).filter(service=s).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
+           stc.append (Tickets.objects.filter(time_create__contains = t).filter(service=s).count())
+           temp = Tickets.objects.filter(time_create__contains = t).filter(service=s).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
            if temp.get('average_difference') == None:
                stat.append (0)
            else:
@@ -713,7 +727,7 @@ def statisticstableall(request):
                if temp.get('average_difference').microseconds > 500000:
                    stat[0] += 1
 
-        return JsonResponse({'nt': nt, 'stc': stc, 'services': services, 'stat': stat}, status=200)
+        return JsonResponse({'nt': nt, 'stc': stc, 'services': services, 'stat': stat, 'date': t}, status=200)
 
 
 # Настройки

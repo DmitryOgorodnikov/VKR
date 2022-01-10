@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app\static\app\content\modal.css" />
+    <Content Include="app\static\app\scripts\Chart.min.js" />
     <Content Include="app\static\app\scripts\kiosk.js" />
     <Content Include="app\static\app\scripts\modal.js" />
     <Content Include="app\static\app\scripts\myset.js" />

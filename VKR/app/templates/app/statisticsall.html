@@ -25,12 +25,11 @@
         <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
     </div>
     <div class="statistics-div-chld-two">
-            <form action="" method="GET">
+        <form action="" method="GET">
             {% csrf_token %}
-                <canvas id="myChart1" width="400" height="100"></canvas>
-                <canvas id="myChart2" width="400" height="100"></canvas>
-                <canvas id="myChart3" width="400" height="100"></canvas>
-            </form>
+            <table class="buttontable">
+            </table>
+        </form>
     </div>
 </div>
 
@@ -40,6 +39,6 @@
 
     <script src="{% static 'app/scripts/statisticsall.js' %}"></script>
     <script src="{% static 'app/scripts/myset.js'%}"> </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    <script src="{% static 'app/scripts/Chart.min.js'%}"></script>
 
 {% endblock %}
