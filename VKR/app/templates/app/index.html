@@ -1,0 +1,20 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="logo-margin-top">
+    <p class="text-center"><img src="../../static/app/img/Russian_Post.png" width="350"></p>
+    <h1 class="text-center">Электронная очередь<h1 />
+</div>
+
+<div>
+    <hr />
+    <div class="index-div login">
+        <p class="text-center"><a class="btn btn-default btn-index" href="{% url 'service' %}">Зайти на окно</a></p>
+        <p class="text-center"><a class="btn btn-default btn-index" href="{% url 'statistics' %}">Статистика</a></p>
+        <p class="text-center"><a class="btn btn-default btn-index" href="{% url 'settings' %}">Настройки СУО</a></p>
+        <p class="text-center"><a class="btn btn-default btn-index" href="{% url 'logout' %}">Выйти</a></p>
+    </div>
+</div>
+
+{% endblock %}

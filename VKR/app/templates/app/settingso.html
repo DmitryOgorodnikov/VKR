@@ -1,0 +1,50 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<nav class="nav-bar">
+    <div>
+        <div class="nav-block1">
+            <p class="index-center">Настройки СУО | ОПС {{opsname}}</p>
+        </div>
+        <div class="nav-block1 nav-block2">
+            <p class="index-center">{{user.get_username}}</p>
+        </div>
+        <div class="nav-block1 nav-block3">
+            <a class="btn btn-default btn-index" href="{% url 'logout' %}">Выйти</a>
+        </div>
+    </div>
+</nav>
+<div class="windows-div">
+    <div class="settings-div-chld">
+        <p class="index-center"><a class="settings-btn" href="{% url 'settings' %}">Учетные записи</a></p>
+        <p class="index-center"><a class="settings-btn" href="{% url 'settingsw' %}">Окна</a></p>
+        <p class="index-center"><a class="settings-btn btn-def" href="{% url 'settingso' %}">ОПС</a></p>
+        <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
+    </div>
+
+    <div class="settings-div-chld-two">
+        <div class="settings-div-chld-4">
+            <form action="." method="POST">
+                {% csrf_token %}
+                <div class="tablediv">
+                    <table>
+
+                    </table>
+                    <input type="button" value="Сохранить" class="btn btn-default btn-custom tablediv-input" />
+                </div>
+                <h4 class="text-center text-red">В случае изменений услуги на окнах будут сброшены!</h4>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'app/scripts/myset.js'%}"> </script>
+<script src="{% static 'app/scripts/settingso.js' %}"></script>
+
+{% endblock %}

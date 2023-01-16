@@ -1,0 +1,38 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<nav class="nav-bar nav-bar-w">
+    <div>
+        <div class="nav-block1">
+            <p class="index-center">Окно ?</p>
+        </div>
+        <div class="nav-block1 nav-block2 nav-block2-w">
+            <p class="index-center">{{user.get_username}}</p>
+        </div>
+        <div class="nav-block1 nav-block3">
+            <a class="btn btn-default btn-index" href="{% url 'logout' %}">Выйти</a>
+        </div>
+    </div>
+</nav>
+
+<div class="windows-div">
+    <div class="windows-div-chld">
+        <form method="POST" class="selects">
+            <h1>Выберите окно</h1>
+            {% csrf_token %}
+            {{ form }}
+            <input class="windows-btn" type="button" value="Зайти" id="Enter">
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'app/scripts/service.js' %}"></script>
+<script src="{% static 'app/scripts/myset.js'%}"></script>
+
+{% endblock %}

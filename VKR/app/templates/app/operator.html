@@ -1,0 +1,71 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<nav class="nav-bar nav-bar-w">
+    <div>
+        <div class="nav-block1 nav-block1-operator">
+            <p class="index-center">Окно {{ window_id }}</p>
+        </div>
+        <div class="nav-block1 nav-block1-operator">
+            <a class="btn btn-default btn-index" id="Change">Сменить</a>
+        </div>
+        <div class="nav-block1 nav-block2 nav-block2-w nav-block1-operator2">
+            <p class="index-center">{{user.get_username}}</p>
+        </div>
+        <div class="nav-block1 nav-block3 ">
+            <a class="btn btn-default btn-index" id="Logout">Выйти</a>
+        </div>
+    </div>
+</nav>
+
+<div class="windows-div">
+    <div class="windows-div-chld">
+        <div class="operator-div2">
+            <h2>
+                <p id="ta">Текущий талон: </p>
+
+                <p id="tb">Услуга: </p>
+            </h2>
+            <div id="time" class="time" visibility = "hidden">
+                <span id="hour">hh</span>:<span id="min">mm</span>:<span id="sec">ss</span>
+            </div>
+        </div>
+        <div class="operator-div">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <input class="windows-btn operator-btn" type="button" value="Следующий" id="Next">
+                <input class="windows-btn operator-btn windows-btn-hidden" type="button" value="Повторный вызов" id="Replay" disabled>
+                <input class="windows-btn operator-btn" type="button" value="Клиент не подошел" id="Cancel" disabled>
+                <input class="windows-btn operator-btn" type="button" value="Отложить" id="Delay" disabled>
+                <input class="windows-btn operator-btn" type="button" value="Перенаправить" id="Redirect" disabled>
+                <input class="windows-btn operator-btn windows-btn-hidden" type="button" value="Вызов по номеру" id="CallingBN">
+                <input class="windows-btn operator-btn" type="button" value="Перерыв" id="Break" disabled>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="hystmodal" id="myModal">
+    <div class="hystmodal__window">
+        <form method="POST" class="selects">
+            <h1>Выберите окно на которое хотите перенаправить текущий талон</h1>
+            {% csrf_token %}
+            {{ form }}
+            <input class="windows-btn" type="button" value="Отправить" id="Red" >
+            <input class="windows-btn" type="button" value="Отмена" id="Can" >
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static 'app/scripts/operator.js' %}"></script>
+    <script src="{% static 'app/scripts/myset.js'%}"> </script>
+
+{% endblock %}

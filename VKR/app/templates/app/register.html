@@ -1,0 +1,23 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="text-center">{{head}}</h1>
+<p class="text-center">{{subhead}}</p>
+
+<form action="." method="post" class="form-div-register">
+    <div class="login-div login-form login">
+        {{ user_form.as_p }}
+        <p><input type="submit" value="{{namebutton}}" class="btn btn-default btn-custom"></p>
+    </div>
+    {% csrf_token %}
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+
+{% endblock %}

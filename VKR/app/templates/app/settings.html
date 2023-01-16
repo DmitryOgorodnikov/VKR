@@ -1,0 +1,53 @@
+{% extends "app/layout.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block content %}
+
+
+<nav class="nav-bar">
+    <div>
+        <div class="nav-block1">
+            <p class="index-center">Настройки СУО | ОПС {{opsname}}</p>
+        </div>
+        <div class="nav-block1 nav-block2">
+            <p class="index-center">{{user.get_username}}</p>
+        </div>
+        <div class="nav-block1 nav-block3">
+            <a class="btn btn-default btn-index" href="{% url 'logout' %}">Выйти</a>
+        </div>
+    </div>
+</nav>
+<div class="windows-div">
+    <div class="settings-div-chld">
+        <p class="index-center"><a class="settings-btn btn-def" href="{% url 'settings' %}">Учетные записи</a></p>
+        <p class="index-center"><a class="settings-btn" href="{% url 'settingsw' %}">Окна</a></p>
+        <p class="index-center"><a class="settings-btn" href="{% url 'settingso' %}">ОПС</a></p>
+        <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
+    </div>
+    <div class="settings-div-chld-two">
+        <div class="settings-div-chld-4">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <table>
+                </table>
+            </form>
+        </div>
+        <div class="settings-div-chld-3">
+            <p class="index-center"><a class="settings-btn button-a" href="{% url 'register' %}">Создать новую учетную запись</a></p>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'app/scripts/jquery-1.10.2.js' %}"></script>
+<script src="{% static 'app/scripts/bootstrap.js' %}"></script>
+<script src="{% static 'app/scripts/respond.js' %}"></script>
+<script src="{% static 'app/scripts/myset.js'%}"></script>
+<script src="{% static 'app/scripts/settings.js' %}"></script>
+<script src="{% static 'app/scripts/modal.js' %}"></script>
+
+{% endblock %}

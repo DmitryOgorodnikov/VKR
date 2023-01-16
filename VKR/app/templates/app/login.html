@@ -1,0 +1,50 @@
+{% extends "app/layout.html" %}
+
+{% block content %}
+
+<div class="logo-margin-top">
+    <p class="text-center"><img src="../../static/app/img/Russian_Post.png" width="350"></p>
+    <h1 class="text-center">Электронная очередь<h1/>
+</div>
+
+<div class="row">
+        <section id="loginForm">
+            <form action="." method="post" class="form-horizontal">
+                {% csrf_token %}
+                <h4 class="text-center">Войдите, используя предоставленную учетную запись</h4>
+                <hr />
+                <div class="form-group">
+                    <div class="col-md-10">
+                        {{ form.username }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-10">
+                        {{ form.password }}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="hidden" name="next" value="/" />
+                        <input type="submit" value="Войти" class="btn btn-default btn-login" />
+                    </div>
+                </div>
+                {% if form.errors %}
+                <p class="validation-summary-errors">Пожалуйста введите корректный логин и пароль.</p>
+                {% endif %}
+            </form>
+        </section>
+    <div class="col-md-4">
+        <section id="socialLoginForm"></section>
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+    {% load static %}
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+
+{% endblock %}

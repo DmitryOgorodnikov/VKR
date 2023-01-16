@@ -1,0 +1,26 @@
+{% extends "app/layout.html" %}
+{% load static %}
+
+{% block content %}
+
+<h1 class="text-center">Изменить параметры услуг</h1>
+<h1 class="text-center">Окно: {{idwindow}}</h1>
+<p class="text-center">Галочка стоит - услуга активна</p>
+
+<form action="" method="GET">
+    {% csrf_token %}
+    <div class="tablediv">
+        <table>
+        </table>
+        <input type="button" value="Сохранить" class="btn btn-default btn-custom tablediv-input" />
+    </div>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script src="{% static 'app/scripts/jquery.validate.min.js' %}"></script>
+<script src="{% static 'app/scripts/settingswchange.js' %}"></script>
+
+{% endblock %}

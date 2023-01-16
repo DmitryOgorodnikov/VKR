@@ -1,0 +1,45 @@
+{% extends "app/layout.html" %}
+{% load render_table from django_tables2 %}
+{% load static %}
+
+{% block content %}
+
+<nav class="nav-bar">
+    <div>
+        <div class="nav-block1">
+            <p class="index-center">Статистика | ОПС {{opsname}}</p>
+        </div>
+        <div class="nav-block1 nav-block2">
+            <p class="index-center">{{user.get_username}}</p>
+        </div>
+        <div class="nav-block1 nav-block3">
+            <a class="btn btn-default btn-index" href="{% url 'logout' %}">Выйти</a>
+        </div>
+    </div>
+</nav>
+<div class="windows-div">
+    <div class="statistics-div-chld">
+        <p class="index-center"><a class="settings-btn" href="{% url 'statistics' %}"> Талоны </a></p>
+        <p class="index-center"><a class="settings-btn" href="{% url 'statisticsw' %}">Окна</a></p>
+        <p class="index-center"><a class="settings-btn btn-def" href="{% url 'statisticsall' %}">Свод</a></p>
+        <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
+    </div>
+    <div class="statistics-div-chld-two">
+            <form action="" method="GET">
+            {% csrf_token %}
+                <canvas id="myChart1" width="400" height="100"></canvas>
+                <canvas id="myChart2" width="400" height="100"></canvas>
+                <canvas id="myChart3" width="400" height="100"></canvas>
+            </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{% static 'app/scripts/statisticsall.js' %}"></script>
+    <script src="{% static 'app/scripts/myset.js'%}"> </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+
+{% endblock %}
