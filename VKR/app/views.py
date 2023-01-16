@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 
 from django.contrib.auth.decorators import login_required
-from .models import Tickets, Windows, Services
+from .models import Tickets, Windows, Services, Profile
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, UserChangeForm, WindowsAuthenticationForm
 from django.db.models import Avg, F
@@ -16,22 +16,15 @@ from .tables import TicketsTable, TicketsTableCentral
 from django_tables2 import SingleTableView, MultiTableMixin
 from django.views.generic.base import TemplateView
 from django.db.models.functions import Round
+from django import forms
 
 
 import json
 import codecs
 
 
-# Функция для расчет среднего значения времени
-class AvgTimeDelta(Avg):
-
-    def convert_value(self, value, expression, connection, context):
-        if value is None:
-            return value
-        if isinstance(value, timedelta):
-            value = value.total_seconds()
-        return float(value)
-
+def chief_required(login_url=None):
+    return user_passes_test(lambda u: u.is_staff, login_url=login_url)
 
 # Страница киоска
 def kiosk(request):
@@ -102,13 +95,17 @@ def kbutton(request):
 @login_required
 def home(request):
     assert isinstance(request, HttpRequest)
-    return render(
-        request,
-        'app/index.html',
-        {
-            'title':'Home Page',
-        }
-    )
+    operator = request.user
+    if operator.profile.chief == True:
+        return render(
+            request,
+            'app/index.html',
+            {
+                'title':'Home Page',
+            }
+        )
+    else:
+        return HttpResponseRedirect('./service/')
 
 
 # Пульт оператора
@@ -678,11 +675,59 @@ def delbutton(request):
 
         return JsonResponse({}, status=200)
 
+@login_required
 def edituser(request):
     if request.POST.get('click', False):
         Useredit = (User.objects.filter(id=request.POST.get('idbutton')))[0]
+
         request.session['useredit'] = Useredit.id
         return JsonResponse({}, status=200)
+
+@login_required
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid():
+            new_user = user_form.save(commit=False)
+            new_user.set_password(user_form.cleaned_data['password'])
+            new_user.save()
+            new_profile = Profile.objects.create(operator=new_user)
+            new_profile.chief = user_form.cleaned_data['chief']
+            new_profile.save()
+            return HttpResponseRedirect('../settings')
+    else:
+        user_form = UserRegistrationForm()
+    head = 'Создание нового аккаунта'
+    subhead = 'Пожалуйста, зарегистрируйте нового пользователя, используя нижеуказанную форму'
+    namebutton = 'Создать'
+    return render(request, 'app/register.html', {'user_form': user_form,'head': head, 'subhead': subhead, 'namebutton': namebutton, 'year':datetime.now().year,})
+
+@login_required
+def editer(request):
+    Useredit = User.objects.filter(id = request.session.get('useredit'))[0]
+    if request.method == 'POST':
+        user_form = UserChangeForm(request.POST, instance=Useredit)
+        if user_form.is_valid():
+            new_user = user_form.save(commit=False)
+            if user_form.cleaned_data['password'] != '':
+                new_user.set_password(user_form.cleaned_data['password'])
+            new_user.save()
+            if Profile.objects.get(operator=new_user) != None:
+                new_profile = Profile.objects.get(operator=new_user)
+            else:
+                new_profile = Profile.objects.create(operator=new_user)
+            new_profile.chief = user_form.cleaned_data['chief']
+            new_profile.save()
+            del request.session['useredit']
+            return HttpResponseRedirect('/settings')
+    else:
+        user_form = UserChangeForm(instance=Useredit)
+    user_form.initial.update({'chief':Useredit.profile.chief})
+    head = 'Редактирование аккаунта'
+    subhead = 'Пожалуйста, измените данные пользователя, используя нижеуказанную форму'
+    namebutton = 'Изменить'
+    return render(request, 'app/register.html', {'user_form': user_form,'head': head, 'subhead': subhead, 'namebutton': namebutton, 'year':datetime.now().year,})
+
 
 def settingstable(request):
     if request.POST.get('click', False):
@@ -819,39 +864,6 @@ def settingso(request):
             'opsname':opsname,
         }
     )
-
-@login_required
-def register(request):
-    if request.method == 'POST':
-        user_form = UserRegistrationForm(request.POST)
-        if user_form.is_valid():
-            new_user = user_form.save(commit=False)
-            new_user.set_password(user_form.cleaned_data['password'])
-            new_user.save()
-            return HttpResponseRedirect('../settings')
-    else:
-        user_form = UserRegistrationForm()
-        head = 'Создание нового аккаунта'
-        subhead = 'Пожалуйста, зарегистрируйте нового пользователя, используя нижеуказанную форму'
-        namebutton = 'Создать'
-        return render(request, 'app/register.html', {'user_form': user_form,'head': head, 'subhead': subhead, 'namebutton': namebutton, 'year':datetime.now().year,})
-
-def editer(request):
-    Useredit = User.objects.filter(id = request.session.get('useredit'))[0]
-    if request.method == 'POST':
-        user_form = UserChangeForm(request.POST, instance=Useredit)
-        if user_form.is_valid():
-            new_user = user_form.save(commit=False)
-            new_user.set_password(user_form.cleaned_data['password'])
-            new_user.save()
-            del request.session['useredit']
-            return HttpResponseRedirect('../settings')
-    else:
-        user_form = UserChangeForm(instance=Useredit)
-        head = 'Редактирование аккаунта'
-        subhead = 'Пожалуйста, измените данные пользователя, используя нижеуказанную форму'
-        namebutton = 'Изменить'
-        return render(request, 'app/register.html', {'user_form': user_form,'head': head, 'subhead': subhead, 'namebutton': namebutton, 'year':datetime.now().year,})
 
 
 

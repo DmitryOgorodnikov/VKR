@@ -63,7 +63,7 @@ $('table').on('click', '#Edit', function () {
             click: true
         },
         success: function (response) {
-            window.location.href = "../editer"
+            window.location.href = "./editer"
         }
     });
 });

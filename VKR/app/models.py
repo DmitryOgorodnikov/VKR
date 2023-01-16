@@ -48,6 +48,5 @@ class Tickets (models.Model):
         return time_service
 
 class Profile(models.Model):
-    operator = models.OneToOneField(User, on_delete=models.PROTECT, verbose_name="Оператор", primary_key = True)
+    operator = models.OneToOneField(User, on_delete=models.PROTECT, verbose_name="Оператор", primary_key = True, unique=True)
     chief = models.BooleanField(default=False, verbose_name="Права начальника")
-    status = models.BooleanField(default=False, verbose_name="Статус УЗ")
