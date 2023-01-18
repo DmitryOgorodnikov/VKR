@@ -1,4 +1,5 @@
 {% extends "app/layout.html" %}
+{% load render_table from django_tables2 %}
 {% load static %}
 
 {% block content %}
@@ -20,23 +21,21 @@
     <div class="settings-div-chld">
         <p class="index-center"><a class="settings-btn" href="{% url 'settings' %}">Учетные записи</a></p>
         <p class="index-center"><a class="settings-btn" href="{% url 'settingsw' %}">Окна</a></p>
-        <p class="index-center"><a class="settings-btn btn-def" href="{% url 'settingso' %}">ОПС</a></p>
-        <p class="index-center"><a class="settings-btn" href="{% url 'settingsm' %}">Настройки</a></p>
+        <p class="index-center"><a class="settings-btn" href="{% url 'settingso' %}">ОПС</a></p>
+        <p class="index-center"><a class="settings-btn btn-def" href="{% url 'settingsm' %}">Настройки</a></p>
         <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
     </div>
 
     <div class="settings-div-chld-two">
         <div class="settings-div-chld-4">
-            <form action="." method="POST">
+            <form action="" method="POST">
                 {% csrf_token %}
-                <div class="tablediv">
-                    <table>
-
-                    </table>
-                    <input type="button" value="Сохранить" class="btn btn-default btn-custom tablediv-input" />
-                </div>
-                <h4 class="text-center text-red">В случае изменений услуги на окнах будут сброшены!</h4>
+                <table>
+                </table>
             </form>
+        </div>
+        <div class="settings-div-chld-3">
+            <p class="index-center"><a class="settings-btn button-a" id="Add">Добавить окно</a></p>
         </div>
     </div>
 </div>
@@ -45,7 +44,7 @@
 
 {% block scripts %}
 
-<script src="{% static 'app/scripts/myset.js'%}"> </script>
-<script src="{% static 'app/scripts/settingso.js' %}"></script>
+<script src="{% static 'app/scripts/myset.js'%}"></script>
+<script src="{% static 'app/scripts/settingsw.js' %}"></script>
 
 {% endblock %}

@@ -33,7 +33,6 @@
   <ItemGroup>
     <Compile Include="app\forms.py" />
     <Compile Include="app\models.py" />
-    <Compile Include="app\tables.py" />
     <Compile Include="app\tests.py" />
     <Compile Include="app\views.py" />
     <Compile Include="app\__init__.py" />
@@ -72,6 +71,8 @@
     <Content Include="app\static\app\scripts\statistics.open.js" />
     <Content Include="app\static\app\scripts\statisticsall.js" />
     <Content Include="app\static\app\scripts\statisticsw.js" />
+    <Content Include="app\static\app\scripts\xlsx.full.min.js" />
+    <Content Include="app\templates\app\settingsm.html" />
     <Content Include="app\templates\app\statistics.html" />
     <Content Include="app\templates\app\settings.html" />
     <Content Include="app\templates\app\service.html" />
@@ -86,7 +87,6 @@
     <Content Include="app\templates\app\settingswchange.html" />
     <Content Include="app\templates\app\statisticsall.html" />
     <Content Include="app\templates\app\statisticsw.html" />
-    <Content Include="app\templates\app\tickets.html" />
     <Content Include="services.json" />
     <Content Include="config.json" />
     <Content Include="requirements.txt" />

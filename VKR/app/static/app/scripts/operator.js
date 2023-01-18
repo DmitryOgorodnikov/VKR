@@ -146,7 +146,7 @@ $('#Change').click(function () {
             click: true
         },
         success: function (response) {
-            window.location.href = "/windows/login/"
+            window.location.href = "/service"
         }
     });
 });

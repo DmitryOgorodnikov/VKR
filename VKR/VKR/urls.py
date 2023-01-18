@@ -8,24 +8,14 @@ from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 
 from app import forms, views
-from app.views import TicketsListCentral, register
+from app.views import register
 
 
 urlpatterns = [
     path('kiosk/', views.kiosk, name='kiosk'),
     path('kiosk/kioskbtn', views.kioskbtn, name='kioskbtn'),
     path('kiosk/kbutton', views.kbutton, name='kbutton'),
-    path('tickets/', 
-         TicketsListCentral.as_view
-         (
-             template_name='app/tickets.html',
-             extra_context=
-             {
-                'title':'Талоны',
-                'year':datetime.now().year,
-             }
-         ),
-         name='tickets'),
+    path('tickets/', views.tickets, name='tickets'),
     path('', views.home, name='home'),
     path('login/',
          LoginView.as_view
@@ -77,9 +67,9 @@ urlpatterns = [
     path('settings/ops/', views.settingso, name='settingso'),
     path('settings/ops/wchange', views.wchange, name='wchange'),
     path('settings/ops/servicestable', views.servicestable, name='servicestable'),
-
-
+    path('settings/mainsettings', views.settingsm, name='settingsm'),
 
     path('admin/', admin.site.urls),
-
 ]
+
+

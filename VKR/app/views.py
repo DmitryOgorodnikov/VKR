@@ -12,7 +12,6 @@ from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, UserChangeForm, WindowsAuthenticationForm
 from django.db.models import Avg, F
 from datetime import timedelta
-from .tables import TicketsTable, TicketsTableCentral
 from django_tables2 import SingleTableView, MultiTableMixin
 from django.views.generic.base import TemplateView
 from django.db.models.functions import Round
@@ -22,13 +21,8 @@ from django import forms
 import json
 import codecs
 
-
-def chief_required(login_url=None):
-    return user_passes_test(lambda u: u.is_staff, login_url=login_url)
-
 # Страница киоска
 def kiosk(request):
-    """Renders the kiosk page."""
     assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
@@ -91,6 +85,22 @@ def kbutton(request):
         return JsonResponse({'ticketname':r}, status=200)
 
 
+def tickets(request):
+    t = datetime.now().date()
+    listoftickets = []
+    listofticketsw = []
+
+    if Tickets.objects.filter(time_create__contains = t).filter(window_id = None).exists():
+        tickets = Tickets.objects.filter(time_create__contains = t).filter(window_id = None)
+        for p in tickets:
+            listoftickets.append(p.name_ticket)
+
+    if Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван").exists():
+        ticketsw = Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван")
+        for p in ticketsw:
+            listofticketsw.append(p.name_ticket + ' - ' + str(p.window_id))
+    return JsonResponse({'listoftickets': listoftickets, 'listofticketsw': listofticketsw}, status=200)
+
 # Основная страница
 @login_required
 def home(request):
@@ -101,7 +111,7 @@ def home(request):
             request,
             'app/index.html',
             {
-                'title':'Home Page',
+                'title':'Главное меню',
             }
         )
     else:
@@ -150,7 +160,6 @@ def windowbutton(request):
 
 @login_required
 def operator(request):
-    """Renders the operator page."""
     assert isinstance(request, HttpRequest)
     window_id = request.session.get('window_id')
     form = WindowsAuthenticationForm()
@@ -158,22 +167,24 @@ def operator(request):
         request,
         'app/operator.html',
         {
-            'title':'Оператор',
+            'title':'Пульт оператора',
             'year':datetime.now().year,
             'window_id': window_id,
             'form':form,
         }
     )
 
+@login_required
 def operatorbutton(request):
     window_id = request.session.get('window_id')
     if request.GET.get('click', False):
         window = Windows.objects.get(id_window = window_id)
-        window.id = None
+        window.operator_id = None
         window.save()
         request.session['window_id'] = None
         return JsonResponse({}, status=200)
 
+@login_required
 def nextbutton(request):
     t = datetime.now().date()
     #request.session['Ticket_n'] = None
@@ -274,7 +285,7 @@ def nextbutton(request):
 
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
-
+@login_required
 def cancelbutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
@@ -316,6 +327,7 @@ def cancelbutton(request):
 
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+@login_required
 def breakbutton(request):
     if request.POST.get('click', False):
 
@@ -334,6 +346,7 @@ def breakbutton(request):
 
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+@login_required
 def delaybutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
@@ -374,7 +387,7 @@ def delaybutton(request):
 
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second, "ticket_r": ticket_r}, status=200)
 
-
+@login_required
 def returnbutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
@@ -402,6 +415,7 @@ def returnbutton(request):
 
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+@login_required
 def redirectbutton(request):
     if request.POST.get('click', False):
         windows_l = []
@@ -410,6 +424,7 @@ def redirectbutton(request):
 
         return JsonResponse({"windows_l": windows_l}, status=200)
 
+@login_required
 def redbutton(request):
     t = datetime.now().date()
     red_window_id = request.POST.get("name")
@@ -464,22 +479,13 @@ def statistics(request):
         request,
         'app/statistics.html',
         {
-            'title':'Статистика',
+            'title':'Лог Талонов',
             'opsname': opsname,
             'year':datetime.now().year,
         }
     )
 
-class TicketsListCentral(MultiTableMixin, TemplateView):
-    template_name = 'app/tickets.html'
-    tables = [
-        TicketsTableCentral(Tickets.objects.exclude(window_id = None).filter(time_close = None), exclude=("id_ticket","time_create","time_call","time_pause","time_close", )),
-        TicketsTableCentral(Tickets.objects.filter(window_id = None), exclude=("id_ticket","window_id","time_create","time_call","time_pause","time_close", ))
-    ]
-    table_pagination = {
-        "per_page": 10
-    }
-
+@login_required
 def statisticstable(request):
     if request.GET.get('click', False):
         t = datetime.now().date()
@@ -544,7 +550,7 @@ def statisticstable(request):
             listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op])
         return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
 
-
+@login_required
 def statisticsw(request):
     assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -554,27 +560,31 @@ def statisticsw(request):
         request,
         'app/statisticsw.html',
         {
-            'title':'Статистика',
+            'title':'Статистика по окнам',
             'opsname': opsname,
             'year':datetime.now().year,
         }
     )
 
+@login_required
 def statisticstablew(request):
     if request.GET.get('click', False):
         t = datetime.now().date()
         nw = []
         tc = []
         at = []
-        tl = Tickets.objects.filter(time_create__contains = t).distinct('window')
+        tl = Tickets.objects.filter(time_create__contains = t).exclude(time_close = None).distinct('window')
         for p in tl:
             nw.append (p.window_id)
         for p in nw:
-            tc.append (Tickets.objects.filter(time_create__contains = t).filter(window_id = p).count())
-            temp = Tickets.objects.filter(time_create__contains = t).filter(window_id = p).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
-            at.append (temp.get('average_difference').seconds)
-            if temp.get('average_difference').microseconds > 500000:
-                at[0] += 1
+            tc.append (Tickets.objects.filter(time_create__contains = t).filter(window_id = p).exclude(time_close = None).count())
+            temp = Tickets.objects.filter(time_create__contains = t).filter(window_id = p).exclude(time_close = None).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
+            if temp.get('average_difference') == None:
+                at.append(0)
+            else:
+                at.append (temp.get('average_difference').seconds)
+                if temp.get('average_difference').microseconds > 500000:
+                    at[0] += 1
         return JsonResponse({'nw': nw,'tc': tc, 'at': at}, status=200)
 
     if request.GET.get('click2', False):
@@ -585,19 +595,22 @@ def statisticstablew(request):
         nw = []
         tc = []
         at = []
-        tl = Tickets.objects.filter(time_create__contains = date).distinct('window')
+        tl = Tickets.objects.filter(time_create__contains = date).exclude(time_close = None).distinct('window')
         for p in tl:
             nw.append (p.window_id)
         for p in nw:
-            tc.append (Tickets.objects.filter(time_create__contains = date).filter(window_id = p).count())
-            temp = Tickets.objects.filter(time_create__contains = date).filter(window_id = p).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
-            at.append (temp.get('average_difference').seconds)
-            if temp.get('average_difference').microseconds > 500000:
-                at[0] += 1
+            tc.append (Tickets.objects.filter(time_create__contains = date).filter(window_id = p).exclude(time_close = None).count())
+            temp = Tickets.objects.filter(time_create__contains = date).filter(window_id = p).exclude(time_close = None).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
+            if temp.get('average_difference') == None:
+                at.append(0)
+            else:
+                at.append (temp.get('average_difference').seconds)
+                if temp.get('average_difference').microseconds > 500000:
+                    at[0] += 1
         return JsonResponse({'date': date, 'nw': nw,'tc': tc, 'at': at}, status=200)
 
+@login_required
 def statisticsall(request):
-    """Renders the kiosk page."""
     assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
@@ -606,16 +619,17 @@ def statisticsall(request):
         request,
         'app/statisticsall.html',
         {
-            'title':'Статистика',
+            'title':'Статистика за год',
             'opsname': opsname,
             'year':datetime.now().year,
         }
     )
 
+@login_required
 def statisticstableall(request):
     if request.GET.get('click', False):
 
-        service = Windows.objects.get(id_window = request.session.get('window_id')).services
+        service = Services.objects.latest('id_services').services
         services = []
         for ser in service:
             if ser['status'] == True:
@@ -631,7 +645,7 @@ def statisticstableall(request):
         nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '06').count())
         nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '07').count())
         nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '08').count())
-        nt.append( Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '09').count())
+        nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '09').count())
         nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '10').count())
         nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '11').count())
         nt.append (Tickets.objects.filter(time_create__year = select_time).filter(time_create__month = '12').count())
@@ -700,7 +714,17 @@ def register(request):
     head = 'Создание нового аккаунта'
     subhead = 'Пожалуйста, зарегистрируйте нового пользователя, используя нижеуказанную форму'
     namebutton = 'Создать'
-    return render(request, 'app/register.html', {'user_form': user_form,'head': head, 'subhead': subhead, 'namebutton': namebutton, 'year':datetime.now().year,})
+    return render(
+        request,
+        'app/register.html',
+        {
+            'title':'Регистрация пользователя',
+            'user_form': user_form,
+            'head': head, 'subhead': subhead, 
+            'namebutton': namebutton, 
+            'year':datetime.now().year,
+        }
+    )
 
 @login_required
 def editer(request):
@@ -726,9 +750,19 @@ def editer(request):
     head = 'Редактирование аккаунта'
     subhead = 'Пожалуйста, измените данные пользователя, используя нижеуказанную форму'
     namebutton = 'Изменить'
-    return render(request, 'app/register.html', {'user_form': user_form,'head': head, 'subhead': subhead, 'namebutton': namebutton, 'year':datetime.now().year,})
+    return render(
+        request,
+        'app/register.html',
+        {
+            'title':'Изменение пользователя',
+            'user_form': user_form,
+            'head': head, 'subhead': subhead, 
+            'namebutton': namebutton, 
+            'year':datetime.now().year,
+        }
+    )
 
-
+@login_required
 def settingstable(request):
     if request.POST.get('click', False):
         user = []
@@ -754,6 +788,7 @@ def settingsw(request):
         }
     )
 
+@login_required
 def settingswtable(request):
     if request.GET.get('click', False):
         window = []
@@ -763,6 +798,7 @@ def settingswtable(request):
 
         return JsonResponse({"window": window}, status=200)
 
+@login_required
 def addwindow(request):
     if request.POST.get('click', False):
         number = Windows.objects.all().count()
@@ -770,6 +806,7 @@ def addwindow(request):
         window.save()
         return JsonResponse({}, status=200)
 
+@login_required
 def changestatusw(request):
     if request.POST.get('click', False):
         window = Windows.objects.get(id_window = request.POST.get('idwindow'))
@@ -780,6 +817,7 @@ def changestatusw(request):
         window.save()
         return JsonResponse({}, status=200)
 
+@login_required
 def changeservicew(request):
     if request.POST.get('click', False):
         assert isinstance(request, HttpRequest)
@@ -787,6 +825,7 @@ def changeservicew(request):
         request.session['idwindow'] = idwindow
         return JsonResponse({}, status=200)
 
+@login_required
 def settingswchange(request):
     if request.POST.get('click', False):
         idwindow = request.session.get('idwindow')
@@ -803,6 +842,7 @@ def settingswchange(request):
             }
         )
 
+@login_required
 def servicestable(request):
     if request.GET.get('click', False):
         idwindow = request.session.get('idwindow')
@@ -812,6 +852,7 @@ def servicestable(request):
         serviceslist = Services.objects.latest('id_services').services
         return JsonResponse({'serviceslist':serviceslist}, status=200)
 
+@login_required
 def wchange(request):
     if request.GET.get('click', False):
         listofcheck = request.GET.get('listofcheck')
@@ -850,7 +891,6 @@ def wchange(request):
 
 @login_required
 def settingso(request):
-    """Renders the operator page."""
     assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
@@ -859,7 +899,23 @@ def settingso(request):
         request,
         'app/settingso.html',
         {
-            'title':'ОПС',
+            'title':'Услуги ОПС',
+            'year':datetime.now().year,
+            'opsname':opsname,
+        }
+    )
+
+@login_required
+def settingsm(request):
+    assert isinstance(request, HttpRequest)
+    with open('config.json', 'r', encoding='utf-8-sig') as f:
+        my_json_obj = json.load(f)
+        opsname = my_json_obj[0]['name']
+    return render(
+        request,
+        'app/settingsm.html',
+        {
+            'title':'Окна',
             'year':datetime.now().year,
             'opsname':opsname,
         }
