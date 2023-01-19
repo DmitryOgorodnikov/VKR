@@ -1,7 +1,1 @@
-[
-  {
-    "name": "XXXXXX",
-    "IP": "localhost",
-    "print": true
-  }
-]
+﻿[{"name": "XXXXXX", "print": 0}]

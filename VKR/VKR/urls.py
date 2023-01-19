@@ -67,7 +67,7 @@ urlpatterns = [
     path('settings/ops/', views.settingso, name='settingso'),
     path('settings/ops/wchange', views.wchange, name='wchange'),
     path('settings/ops/servicestable', views.servicestable, name='servicestable'),
-    path('settings/mainsettings', views.settingsm, name='settingsm'),
+    path('settings/settingsm', views.settingsm, name='settingsm'),
 
     path('admin/', admin.site.urls),
 ]

@@ -64,6 +64,7 @@
     <Content Include="app\static\app\scripts\operator.js" />
     <Content Include="app\static\app\scripts\service.js" />
     <Content Include="app\static\app\scripts\settings.js" />
+    <Content Include="app\static\app\scripts\settingsm.js" />
     <Content Include="app\static\app\scripts\settingso.js" />
     <Content Include="app\static\app\scripts\settingsw.js" />
     <Content Include="app\static\app\scripts\settingswchange.js" />

@@ -93,6 +93,22 @@ input[type="checkbox"].input-validation-error {
 
 .btn-index {
     width: 130px;
+    margin-right: 5px;
+}
+
+.change {
+    background: #1b6ec2;
+    color: white;
+}
+
+.del {
+    background: #dc3545;
+    color: white;
+}
+
+.op {
+    background: #3d7f3d;
+    color: white;
 }
 
 .login-div {
@@ -358,7 +374,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .tablediv {
-    width: 250px;
+    width: 245px;
     margin: 0 auto;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -380,7 +396,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .table5 {
-    width: 300px;
+    width: 600px;
 }
 
 .settings-btn {
@@ -414,7 +430,10 @@ input[type="checkbox"].input-validation-error {
 
 .button-a {
     width: 250px;
+    margin-top: 6px;
     text-align: center;
+    background: #1b6ec2;
+    color: white;
 }
 
 .button-b {
@@ -422,11 +441,6 @@ input[type="checkbox"].input-validation-error {
     text-align: center;
 }
 
-.settings-btn:focus {
-    outline: thin dotted #333;
-    outline: 5px auto -webkit-focus-ring-color;
-    outline-offset: -2px;
-}
 
 .settings-btn:hover,
 .settings-btn:focus {

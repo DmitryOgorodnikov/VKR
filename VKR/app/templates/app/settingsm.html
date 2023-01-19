@@ -30,13 +30,15 @@
         <div class="settings-div-chld-4">
             <form action="" method="POST">
                 {% csrf_token %}
-                <table>
-                </table>
+                <div class="tablediv">
+                    <table>
+
+                    </table>
+                    <input type="button" value="Сохранить" class="btn btn-default btn-custom tablediv-input change" />
+                </div>
             </form>
         </div>
-        <div class="settings-div-chld-3">
-            <p class="index-center"><a class="settings-btn button-a" id="Add">Добавить окно</a></p>
-        </div>
+
     </div>
 </div>
 
@@ -45,6 +47,6 @@
 {% block scripts %}
 
 <script src="{% static 'app/scripts/myset.js'%}"></script>
-<script src="{% static 'app/scripts/settingsw.js' %}"></script>
+<script src="{% static 'app/scripts/settingsm.js' %}"></script>
 
 {% endblock %}

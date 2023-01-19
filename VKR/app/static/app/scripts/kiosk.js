@@ -54,8 +54,9 @@ $('.kiosk-div').on('click', '#buttonticket', function () {
                 content: '<p>' + response.ticketname + '</p>',
             });
             modal.show();
-            $('#print-text').html(response.ticketname)
-            callPrint();
+            if (response.printcheck == 1)
+                $('#print-text').html(response.ticketname)
+                callPrint();
             setTimeout(() => { location.reload();  }, 5000);
 
         }

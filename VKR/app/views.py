@@ -15,6 +15,7 @@ from datetime import timedelta
 from django_tables2 import SingleTableView, MultiTableMixin
 from django.views.generic.base import TemplateView
 from django.db.models.functions import Round
+from distutils.util import strtobool
 from django import forms
 
 
@@ -82,7 +83,12 @@ def kbutton(request):
         Ticket.status = 'Выдан'
         Ticket.time_create = datetime.now()
         Ticket.save()
-        return JsonResponse({'ticketname':r}, status=200)
+
+        with open('config.json', 'r', encoding='utf-8-sig') as f:
+            my_json_obj = json.load(f)
+            printcheck = my_json_obj[0]['print']
+
+        return JsonResponse({'ticketname': r, 'printcheck': printcheck}, status=200)
 
 
 def tickets(request):
@@ -685,7 +691,8 @@ def settings(request):
 def delbutton(request):
     if request.POST.get('click', False):
         Userdel = (User.objects.filter(id=request.POST.get('idbutton')))[0]
-        Userdel.delete()
+        Userdel.is_active = False
+        Userdel.save()
 
         return JsonResponse({}, status=200)
 
@@ -766,7 +773,7 @@ def editer(request):
 def settingstable(request):
     if request.POST.get('click', False):
         user = []
-        users = User.objects.exclude(username = 'admin')
+        users = User.objects.exclude(username = 'admin').exclude(is_active = False)
         for p in users:
             user.append([p.id, p.username, p.last_name])
 
@@ -810,10 +817,10 @@ def addwindow(request):
 def changestatusw(request):
     if request.POST.get('click', False):
         window = Windows.objects.get(id_window = request.POST.get('idwindow'))
-        if window.active is True:
-            window.active = False
+        if window.status is True:
+            window.status = False
         else:
-            window.active = True
+            window.status = True
         window.save()
         return JsonResponse({}, status=200)
 
@@ -907,18 +914,41 @@ def settingso(request):
 
 @login_required
 def settingsm(request):
-    assert isinstance(request, HttpRequest)
-    with open('config.json', 'r', encoding='utf-8-sig') as f:
-        my_json_obj = json.load(f)
-        opsname = my_json_obj[0]['name']
-    return render(
-        request,
-        'app/settingsm.html',
-        {
-            'title':'Окна',
-            'year':datetime.now().year,
-            'opsname':opsname,
-        }
+    if request.GET.get('click1', False):
+        with open('config.json', 'r', encoding='utf-8-sig') as f:
+            my_json_obj = json.load(f)
+            opsname = my_json_obj[0]['name']
+            printcheck = my_json_obj[0]['print']
+        return JsonResponse({'opsname':opsname, 'printcheck':printcheck }, status=200)
+    
+    if request.POST.get('click2', False):
+        listofsettings = request.POST.get('listofsettings')
+        listofsettings = listofsettings.split()
+        with open('config.json', 'r', encoding='utf-8-sig') as f:
+            my_json_obj = json.load(f)
+            if my_json_obj[0]['name'] != listofsettings[0]:
+                my_json_obj[0]['name'] = listofsettings[0]
+            if my_json_obj[0]['print'] != strtobool(listofsettings[1]):
+                my_json_obj[0]['print'] = strtobool(listofsettings[1])
+        my_json_obj = json.dumps(my_json_obj, ensure_ascii=False)
+        with codecs.open("config.json", "w", "utf-8-sig") as temp:
+            temp.write(my_json_obj)
+            temp.close()
+        return JsonResponse({}, status=200)
+
+    else:
+        assert isinstance(request, HttpRequest)
+        with open('config.json', 'r', encoding='utf-8-sig') as f:
+            my_json_obj = json.load(f)
+            opsname = my_json_obj[0]['name']
+        return render(
+            request,
+            'app/settingsm.html',
+            {
+                'title':'Окна',
+                'year':datetime.now().year,
+                'opsname':opsname,
+            }
     )
 
 
