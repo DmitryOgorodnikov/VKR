@@ -396,7 +396,11 @@ input[type="checkbox"].input-validation-error {
 }
 
 .table5 {
-    width: 600px;
+    width: 90px;
+}
+
+.table6 {
+    width: 400px;
 }
 
 .settings-btn {

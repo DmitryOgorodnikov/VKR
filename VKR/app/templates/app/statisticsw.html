@@ -25,14 +25,13 @@
         <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
     </div>
     <div class="statistics-div-chld-two">
-            <form action="" method="GET">
+        <form action="" method="GET">
             {% csrf_token %}
-                <table class="buttontable">
-
-                </table>
-                <canvas id="myChart1" width="400" height="100"></canvas>
-                <canvas id="myChart2" width="400" height="100"></canvas>
-            </form>
+            <table class="buttontable">
+            </table>
+            <table class="stattable" id="TableToExport">
+            </table>
+        </form>
     </div>
 </div>
 

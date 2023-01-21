@@ -59,6 +59,7 @@ urlpatterns = [
     path('settings/window/', views.settingsw, name='settingsw'),
     path('settings/window/settingswtable', views.settingswtable, name='settingswtable'),
     path('settings/window/addwindow', views.addwindow, name='addwindow'),
+    path('settings/window/windowreset', views.windowreset, name='windowreset'),
     path('settings/window/changestatusw', views.changestatusw, name='changestatusw'),
     path('settings/window/changeservicew', views.changeservicew, name='changeservicew'),
     path('settings/window/settingswchange', views.settingswchange, name='settingswchange'),

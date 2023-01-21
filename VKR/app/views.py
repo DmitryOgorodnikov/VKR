@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
 
 from django.contrib.auth.decorators import login_required
-from .models import Tickets, Windows, Services, Profile
+from .models import Tickets, Windows, Services, Profile, LogWindows
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, UserChangeForm, WindowsAuthenticationForm
 from django.db.models import Avg, F
@@ -128,12 +128,6 @@ def home(request):
 @login_required
 def service(request):
     if (Windows.objects.filter(operator = request.user).exists() != False):
-        window = Windows.objects.get(operator = request.user)
-        window_id = window.id_window
-        request.session['window_id'] = window_id
-        user = User.objects.get(username=request.user)
-        window.id = user
-        window.save()
         return HttpResponseRedirect('./operator/')
     else:
         form = WindowsAuthenticationForm()
@@ -162,6 +156,10 @@ def windowbutton(request):
         user = User.objects.get(username=request.user)
         window.operator = user
         window.save()
+        number = LogWindows.objects.all().count()
+        logwindow = LogWindows(id_log = number, window = window, operator = user)
+        logwindow.time_login = datetime.now()
+        logwindow.save()
         return JsonResponse({}, status=200)
 
 @login_required
@@ -187,6 +185,9 @@ def operatorbutton(request):
         window = Windows.objects.get(id_window = window_id)
         window.operator_id = None
         window.save()
+        logwindow = LogWindows.objects.filter(window_id = window_id).last()
+        logwindow.time_logout = datetime.now()
+        logwindow.save()
         request.session['window_id'] = None
         return JsonResponse({}, status=200)
 
@@ -576,44 +577,52 @@ def statisticsw(request):
 def statisticstablew(request):
     if request.GET.get('click', False):
         t = datetime.now().date()
-        nw = []
-        tc = []
-        at = []
-        tl = Tickets.objects.filter(time_create__contains = t).exclude(time_close = None).distinct('window')
-        for p in tl:
-            nw.append (p.window_id)
-        for p in nw:
-            tc.append (Tickets.objects.filter(time_create__contains = t).filter(window_id = p).exclude(time_close = None).count())
-            temp = Tickets.objects.filter(time_create__contains = t).filter(window_id = p).exclude(time_close = None).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
-            if temp.get('average_difference') == None:
-                at.append(0)
+        listoflogwindows = []
+        logwindow = LogWindows.objects.filter(time_login__contains = t).order_by('id_log')
+        for p in logwindow:
+            tlogin = p.time_login.time().strftime("%H:%M:%S")
+
+            if p.time_logout == None:
+                tlogout = ''
+                tservice = ''
             else:
-                at.append (temp.get('average_difference').seconds)
-                if temp.get('average_difference').microseconds > 500000:
-                    at[0] += 1
-        return JsonResponse({'nw': nw,'tc': tc, 'at': at}, status=200)
+                tlogout = p.time_logout.time().strftime("%H:%M:%S")
+                tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
+            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice])
+        return JsonResponse({'listoflogwindows': listoflogwindows}, status=200)
 
     if request.GET.get('click2', False):
         date = request.GET.get('date').split(', ')
         date[1] = str(int(date[1]) + 1)
         date = ("-".join(date))
         date = (datetime.strptime(date, "%Y-%m-%d")).date()
-        nw = []
-        tc = []
-        at = []
-        tl = Tickets.objects.filter(time_create__contains = date).exclude(time_close = None).distinct('window')
-        for p in tl:
-            nw.append (p.window_id)
-        for p in nw:
-            tc.append (Tickets.objects.filter(time_create__contains = date).filter(window_id = p).exclude(time_close = None).count())
-            temp = Tickets.objects.filter(time_create__contains = date).filter(window_id = p).exclude(time_close = None).aggregate(average_difference=Avg(F('time_close') - F('time_call')))
-            if temp.get('average_difference') == None:
-                at.append(0)
+        listoftickets = []
+        tickets = Tickets.objects.filter(time_create__contains = date).order_by('id_ticket')
+        for p in tickets:
+            tc = p.time_create.time().strftime("%H:%M:%S")
+
+            if p.time_call == None:
+                tca = ''
             else:
-                at.append (temp.get('average_difference').seconds)
-                if temp.get('average_difference').microseconds > 500000:
-                    at[0] += 1
-        return JsonResponse({'date': date, 'nw': nw,'tc': tc, 'at': at}, status=200)
+                tca = p.time_call.time().strftime("%H:%M:%S")
+
+            if p.time_close == None:
+                tcl = ''
+            else:
+                tcl = p.time_close.time().strftime("%H:%M:%S")
+
+            if p.window_id == None:
+                iw = ''
+            else:
+                iw = p.window_id
+
+            if p.operator == None:
+                op = ''
+            else:
+                op = p.operator.last_name +' ('+ p.operator.username +')'
+
+            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op])
+        return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
 
 @login_required
 def statisticsall(request):
@@ -801,7 +810,11 @@ def settingswtable(request):
         window = []
         windows = Windows.objects.all().order_by("id_window")
         for p in windows:
-            window.append([p.id_window, p.status])
+            if p.operator == None:
+                operator = ''
+            else:
+                operator = p.operator.username
+            window.append([p.id_window, p.status, operator])
 
         return JsonResponse({"window": window}, status=200)
 
@@ -810,6 +823,17 @@ def addwindow(request):
     if request.POST.get('click', False):
         number = Windows.objects.all().count()
         window = Windows(id_window = number+1, services = Services.objects.latest('id_services').services)
+        window.save()
+        return JsonResponse({}, status=200)
+
+@login_required
+def windowreset(request):
+    if request.POST.get('click', False):
+        window = Windows.objects.get(id_window = request.POST.get('idwindow'))
+        logwindow = LogWindows.objects.filter(operator = window.operator).last()
+        logwindow.time_logout = datetime.now()
+        logwindow.save()
+        window.operator = None
         window.save()
         return JsonResponse({}, status=200)
 
