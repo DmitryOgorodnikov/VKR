@@ -596,33 +596,19 @@ def statisticstablew(request):
         date[1] = str(int(date[1]) + 1)
         date = ("-".join(date))
         date = (datetime.strptime(date, "%Y-%m-%d")).date()
-        listoftickets = []
-        tickets = Tickets.objects.filter(time_create__contains = date).order_by('id_ticket')
-        for p in tickets:
-            tc = p.time_create.time().strftime("%H:%M:%S")
+        listoflogwindows = []
+        logwindow = LogWindows.objects.filter(time_login__contains = date).order_by('id_log')
+        for p in logwindow:
+            tlogin = p.time_login.time().strftime("%H:%M:%S")
 
-            if p.time_call == None:
-                tca = ''
+            if p.time_logout == None:
+                tlogout = ''
+                tservice = ''
             else:
-                tca = p.time_call.time().strftime("%H:%M:%S")
-
-            if p.time_close == None:
-                tcl = ''
-            else:
-                tcl = p.time_close.time().strftime("%H:%M:%S")
-
-            if p.window_id == None:
-                iw = ''
-            else:
-                iw = p.window_id
-
-            if p.operator == None:
-                op = ''
-            else:
-                op = p.operator.last_name +' ('+ p.operator.username +')'
-
-            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op])
-        return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
+                tlogout = p.time_logout.time().strftime("%H:%M:%S")
+                tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
+            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice])
+        return JsonResponse({'date': date, 'listoflogwindows': listoflogwindows}, status=200)
 
 @login_required
 def statisticsall(request):

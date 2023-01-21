@@ -85,17 +85,14 @@ $('table').on('click', '.settings-btn', function () {
                 '<td><button type="button" class="settings-btn" name="' + date1.getFullYear() + ', ' + date1.getMonth() + ', ' + date1.getDate() + '">' + arr[3] + '</button></td>' +
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
-            arr = response.listoftickets;
-            $('.stattable').prepend('<th>Имя талона</th><th>Услуга</th><th>Статус</th><th>Время выдачи</th><th>Время вызова</th><th>Время закрытия</th><th>Окно</th><th>Оператор</th>');
+            arr = response.listoflogwindows;
+            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th>');
             arr.forEach(function (item, i, arr) {
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>' +
                     '<td>' + item[2] + '</td>' +
                     '<td>' + item[3] + '</td>' +
                     '<td>' + item[4] + '</td>' +
-                    '<td>' + item[5] + '</td>' +
-                    '<td>' + item[6] + '</td>' +
-                    '<td>' + item[7] + '</td>' +
                     '</tr > ');
             });
         }
