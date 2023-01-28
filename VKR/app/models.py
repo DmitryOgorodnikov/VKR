@@ -38,15 +38,6 @@ class Tickets (models.Model):
     time_pause = models.DurationField(default=timedelta(seconds=0), verbose_name="Время пауз")
     time_close = models.DateTimeField(null=True, verbose_name="Время закрытия")
 
-    def time_service(self):
-        time_service = timedelta(0)
-        if self.time_close is not None and self.time_call is not None:
-            time_period = self.time_close - self.time_call
-            time_service = time_period-self.time_pause
-        if time_service == timedelta(seconds=0):
-            time_service = None
-        return time_service
-
 class Profile(models.Model):
     operator = models.OneToOneField(User, on_delete=models.PROTECT, verbose_name="Оператор", primary_key = True, unique=True)
     chief = models.BooleanField(default=False, verbose_name="Права начальника")
