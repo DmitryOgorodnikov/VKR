@@ -17,6 +17,8 @@ from django.views.generic.base import TemplateView
 from django.db.models.functions import Round
 from distutils.util import strtobool
 from django import forms
+from django.contrib.sessions.models import Session
+from django.contrib.auth import logout
 
 
 import json
@@ -194,7 +196,6 @@ def operatorbutton(request):
 @login_required
 def nextbutton(request):
     t = datetime.now().date()
-    #request.session['Ticket_n'] = None
     if request.POST.get('click', False):
         service = Windows.objects.get(id_window = request.session.get('window_id')).services
         services = []
@@ -819,6 +820,13 @@ def windowreset(request):
         logwindow = LogWindows.objects.filter(operator = window.operator).last()
         logwindow.time_logout = datetime.now()
         logwindow.save()
+        sessions = list(Session.objects.all())
+        for s in sessions:
+            if s.get_decoded().get('_auth_user_id') == str(window.operator.id):
+                ses = Session.objects.get(pk = s.pk)
+                ses.delete()
+
+        
         window.operator = None
         window.save()
         return JsonResponse({}, status=200)

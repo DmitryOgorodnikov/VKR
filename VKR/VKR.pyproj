@@ -16,11 +16,14 @@
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
-    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <WebBrowserUrl>http://localhost:5000</WebBrowserUrl>
     <LaunchProvider>Django launcher</LaunchProvider>
     <DjangoSettingsModule>VKR.settings</DjangoSettingsModule>
     <OutputPath>.</OutputPath>
     <SuppressCollectPythonCloudServiceFiles>true</SuppressCollectPythonCloudServiceFiles>
+    <PythonRunWebServerCommandArguments>runserver --settings $(DjangoSettingsModule) %SERVER_PORT% $(CommandLineArguments)</PythonRunWebServerCommandArguments>
+    <PythonRunWebServerCommandType />
+    <PythonDebugWebServerCommandType />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

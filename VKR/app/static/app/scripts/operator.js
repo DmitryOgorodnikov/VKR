@@ -6,12 +6,15 @@ $('#Next').click(function () {
             click: true
         },
         success: function (response) {
-            $('#ta').text(response.ticket);
-            $('#tb').text(response.service);
-            localStorage.setItem('ticket', response.ticket)
-            localStorage.setItem('hour', response.hour)
-            localStorage.setItem('minute', response.minute)
-            localStorage.setItem('second', response.second)
+            if (typeof response.ticket === "undefined")
+                location.reload()
+            else
+                $('#ta').text(response.ticket);
+                $('#tb').text(response.service);
+                localStorage.setItem('ticket', response.ticket)
+                localStorage.setItem('hour', response.hour)
+                localStorage.setItem('minute', response.minute)
+                localStorage.setItem('second', response.second)
         }
     });
 });
@@ -24,12 +27,15 @@ $('#Cancel').click(function () {
             click: true
         },
         success: function (response) {
-            $('#ta').text(response.ticket);
-            $('#tb').text(response.service);
-            localStorage.setItem('ticket', response.ticket)
-            localStorage.setItem('hour', response.hour)
-            localStorage.setItem('minute', response.minute)
-            localStorage.setItem('second', response.second)
+            if (typeof response.ticket === "undefined")
+                location.reload()
+            else
+                $('#ta').text(response.ticket);
+                $('#tb').text(response.service);
+                localStorage.setItem('ticket', response.ticket)
+                localStorage.setItem('hour', response.hour)
+                localStorage.setItem('minute', response.minute)
+                localStorage.setItem('second', response.second)
         }
     });
 });
@@ -43,14 +49,17 @@ $('#Delay').click(function () {
                 click: true
             },
             success: function (response) {
-                $('#Delay').addClass('return')
-                $('#Delay').attr("value", "Вернуть талон " + response.ticket_r);
-                $('#ta').text(response.ticket);
-                $('#tb').text(response.service);
-                localStorage.setItem('ticket', response.ticket)
-                localStorage.setItem('hour', response.hour)
-                localStorage.setItem('minute', response.minute)
-                localStorage.setItem('second', response.second)
+                if (typeof response.ticket === "undefined")
+                    location.reload()
+                else
+                    $('#Delay').addClass('return')
+                    $('#Delay').attr("value", "Вернуть талон " + response.ticket_r);
+                    $('#ta').text(response.ticket);
+                    $('#tb').text(response.service);
+                    localStorage.setItem('ticket', response.ticket)
+                    localStorage.setItem('hour', response.hour)
+                    localStorage.setItem('minute', response.minute)
+                    localStorage.setItem('second', response.second)
             }
         });
     }
@@ -62,14 +71,17 @@ $('#Delay').click(function () {
                 click: true
             },
             success: function (response) {
-                $('#Delay').removeClass('return')
-                $('#Delay').attr("value", "Отложить");
-                $('#ta').text(response.ticket);
-                $('#tb').text(response.service);
-                localStorage.setItem('ticket', response.ticket)
-                localStorage.setItem('hour', response.hour)
-                localStorage.setItem('minute', response.minute)
-                localStorage.setItem('second', response.second)
+                if (typeof response.ticket === "undefined")
+                    location.reload()
+                else
+                    $('#Delay').removeClass('return')
+                    $('#Delay').attr("value", "Отложить");
+                    $('#ta').text(response.ticket);
+                    $('#tb').text(response.service);
+                    localStorage.setItem('ticket', response.ticket)
+                    localStorage.setItem('hour', response.hour)
+                    localStorage.setItem('minute', response.minute)
+                    localStorage.setItem('second', response.second)
             }
         });
     }
@@ -83,11 +95,14 @@ $('#Redirect').click(function () {
             click: true
         },
         success: function (response) {
-            $('#myModal').css('display', 'flex');
-            $('#id_id_window option').remove();
-            for (var i = 0; i < response.windows_l.length; i++) {
-                $('#id_id_window').prepend('<option value="' + (i + 1) + '">' + response.windows_l[i] + '</option>');
-            }
+            if (typeof response.windows_l === "undefined")
+                location.reload()
+            else
+                $('#myModal').css('display', 'flex');
+                $('#id_id_window option').remove();
+                for (var i = 0; i < response.windows_l.length; i++) {
+                    $('#id_id_window').prepend('<option value="' + (i + 1) + '">' + response.windows_l[i] + '</option>');
+                }
         }
     });
 });
@@ -105,13 +120,16 @@ $('#Red').click(function () {
             click: true
         },
         success: function (response) {
-            $('#myModal').css('display', 'none');
-            $('#ta').text(response.ticket);
-            $('#tb').text(response.service);
-            localStorage.setItem('ticket', response.ticket)
-            localStorage.setItem('hour', response.hour)
-            localStorage.setItem('minute', response.minute)
-            localStorage.setItem('second', response.second)
+            if (typeof response.ticket === "undefined")
+                location.reload()
+            else
+                $('#myModal').css('display', 'none');
+                $('#ta').text(response.ticket);
+                $('#tb').text(response.service);
+                localStorage.setItem('ticket', response.ticket)
+                localStorage.setItem('hour', response.hour)
+                localStorage.setItem('minute', response.minute)
+                localStorage.setItem('second', response.second)
             }
     });
 });
@@ -124,12 +142,15 @@ $('#Break').click(function () {
             click: true
         },
         success: function (response) {
-            $('#ta').text(response.ticket);
-            $('#tb').text(response.service);
-            localStorage.setItem('ticket', response.ticket)
-            localStorage.setItem('hour', response.hour)
-            localStorage.setItem('minute', response.minute)
-            localStorage.setItem('second', response.second)
+            if (typeof response.ticket === "undefined")
+                location.reload()
+            else
+                $('#ta').text(response.ticket);
+                $('#tb').text(response.service);
+                localStorage.setItem('ticket', response.ticket)
+                localStorage.setItem('hour', response.hour)
+                localStorage.setItem('minute', response.minute)
+                localStorage.setItem('second', response.second)
         }
     });
 });

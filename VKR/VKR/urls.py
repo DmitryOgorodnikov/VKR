@@ -12,10 +12,12 @@ from app.views import register
 
 
 urlpatterns = [
+    # Киоск
     path('kiosk/', views.kiosk, name='kiosk'),
     path('kiosk/kioskbtn', views.kioskbtn, name='kioskbtn'),
     path('kiosk/kbutton', views.kbutton, name='kbutton'),
     path('tickets/', views.tickets, name='tickets'),
+    # Главная страница
     path('', views.home, name='home'),
     path('login/',
          LoginView.as_view
