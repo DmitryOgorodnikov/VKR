@@ -112,7 +112,6 @@ def tickets(request):
 # Основная страница
 @login_required
 def home(request):
-    assert isinstance(request, HttpRequest)
     operator = request.user
     if operator.profile.chief == True:
         return render(
