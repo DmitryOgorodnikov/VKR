@@ -11,10 +11,11 @@ $('#Next').click(function () {
             else
                 $('#ta').text(response.ticket);
                 $('#tb').text(response.service);
-                localStorage.setItem('ticket', response.ticket)
-                localStorage.setItem('hour', response.hour)
-                localStorage.setItem('minute', response.minute)
-                localStorage.setItem('second', response.second)
+                localStorage.setItem('ticket', response.ticket);
+                localStorage.setItem('service', response.service);
+                localStorage.setItem('hour', response.hour);
+                localStorage.setItem('minute', response.minute);
+                localStorage.setItem('second', response.second);
         }
     });
 });
@@ -32,10 +33,11 @@ $('#Cancel').click(function () {
             else
                 $('#ta').text(response.ticket);
                 $('#tb').text(response.service);
-                localStorage.setItem('ticket', response.ticket)
-                localStorage.setItem('hour', response.hour)
-                localStorage.setItem('minute', response.minute)
-                localStorage.setItem('second', response.second)
+                localStorage.setItem('ticket', response.ticket);
+                localStorage.setItem('service', response.service);
+                localStorage.setItem('hour', response.hour);
+                localStorage.setItem('minute', response.minute);
+                localStorage.setItem('second', response.second);
         }
     });
 });
@@ -56,10 +58,12 @@ $('#Delay').click(function () {
                     $('#Delay').attr("value", "Вернуть талон " + response.ticket_r);
                     $('#ta').text(response.ticket);
                     $('#tb').text(response.service);
-                    localStorage.setItem('ticket', response.ticket)
-                    localStorage.setItem('hour', response.hour)
-                    localStorage.setItem('minute', response.minute)
-                    localStorage.setItem('second', response.second)
+                    localStorage.setItem('ticket_r', response.ticket_r);
+                    localStorage.setItem('ticket', response.ticket);
+                    localStorage.setItem('service', response.service);
+                    localStorage.setItem('hour', response.hour);
+                    localStorage.setItem('minute', response.minute);
+                    localStorage.setItem('second', response.second);
             }
         });
     }
@@ -78,10 +82,12 @@ $('#Delay').click(function () {
                     $('#Delay').attr("value", "Отложить");
                     $('#ta').text(response.ticket);
                     $('#tb').text(response.service);
-                    localStorage.setItem('ticket', response.ticket)
-                    localStorage.setItem('hour', response.hour)
-                    localStorage.setItem('minute', response.minute)
-                    localStorage.setItem('second', response.second)
+                    localStorage.removeItem('ticket_r');
+                    localStorage.setItem('ticket', response.ticket);
+                    localStorage.setItem('service', response.service);
+                    localStorage.setItem('hour', response.hour);
+                    localStorage.setItem('minute', response.minute);
+                    localStorage.setItem('second', response.second);
             }
         });
     }
@@ -126,10 +132,11 @@ $('#Red').click(function () {
                 $('#myModal').css('display', 'none');
                 $('#ta').text(response.ticket);
                 $('#tb').text(response.service);
-                localStorage.setItem('ticket', response.ticket)
-                localStorage.setItem('hour', response.hour)
-                localStorage.setItem('minute', response.minute)
-                localStorage.setItem('second', response.second)
+                localStorage.setItem('ticket', response.ticket);
+                localStorage.setItem('service', response.service);
+                localStorage.setItem('hour', response.hour);
+                localStorage.setItem('minute', response.minute);
+                localStorage.setItem('second', response.second);
             }
     });
 });
@@ -147,10 +154,11 @@ $('#Break').click(function () {
             else
                 $('#ta').text(response.ticket);
                 $('#tb').text(response.service);
-                localStorage.setItem('ticket', response.ticket)
-                localStorage.setItem('hour', response.hour)
-                localStorage.setItem('minute', response.minute)
-                localStorage.setItem('second', response.second)
+                localStorage.setItem('ticket', response.ticket);
+                localStorage.setItem('service', response.service);
+                localStorage.setItem('hour', response.hour);
+                localStorage.setItem('minute', response.minute);
+                localStorage.setItem('second', response.second);
         }
     });
 });
@@ -167,7 +175,8 @@ $('#Change').click(function () {
             click: true
         },
         success: function (response) {
-            window.location.href = "/service"
+            localStorage.clear();
+            window.location.href = "/service";
         }
     });
 });
@@ -180,7 +189,8 @@ $('#Logout').click(function () {
             click: true
         },
         success: function (response) {
-            window.location.href = "/logout/"
+            localStorage.clear();
+            window.location.href = "/logout/";
         }
     });
 });
@@ -191,31 +201,37 @@ function update() {
     var date = new Date()
     var mint = 0
     var hort = 0
-    if (typeof localStorage.getItem('ticket') !== 'undefined') $('#ta').text(localStorage.getItem('ticket'));
+    if (localStorage.getItem('ticket') != null) $('#ta').text(localStorage.getItem('ticket'));
+    if (localStorage.getItem('service') != null) $('#tb').text(localStorage.getItem('service'));
+    if (localStorage.getItem('ticket_r') != null){
+        $('#Delay').addClass('return');
+        $('#Delay').attr("value", "Вернуть талон " + localStorage.getItem('ticket_r'));
+        $('#Delay').removeAttr('disabled');
+    }
 
-    var seconds = date.getSeconds() - localStorage.getItem('second')
+    var seconds = date.getSeconds() - localStorage.getItem('second');
     if (seconds < 0) {
         seconds = 60 + seconds;
         mint = 1;
     }
-    if (seconds < 10) seconds = '0' + seconds
+    if (seconds < 10) seconds = '0' + seconds;
     if (isNaN(seconds)) {
         $('#time').css('visibility', 'hidden');
         $('#Replay, #Cancel, #Break, #Redirect').attr('disabled', true);
     }
-    document.getElementById('sec').innerHTML = seconds
+    document.getElementById('sec').innerHTML = seconds;
 
-    var minutes = date.getMinutes() - localStorage.getItem('minute') - mint
+    var minutes = date.getMinutes() - localStorage.getItem('minute') - mint;
     if (minutes < 0) {
         minutes = 60 + minutes;
         hort = 1;
     }
-    if (minutes < 10) minutes = '0' + minutes
-    document.getElementById('min').innerHTML = minutes
+    if (minutes < 10) minutes = '0' + minutes;
+    document.getElementById('min').innerHTML = minutes;
 
-    var hours = date.getHours() - localStorage.getItem('hour') - hort
-    if (hours < 10) hours = '0' + hours
-    document.getElementById('hour').innerHTML = hours
+    var hours = date.getHours() - localStorage.getItem('hour') - hort;
+    if (hours < 10) hours = '0' + hours;
+    document.getElementById('hour').innerHTML = hours;
 
     if (hours === '00' && minutes === '00') {
         $('#time').css('visibility', 'visible');

@@ -187,6 +187,13 @@ def operatorbutton(request):
         logwindow = LogWindows.objects.filter(window_id = window_id).last()
         logwindow.time_logout = datetime.now()
         logwindow.save()
+
+        if Tickets.objects.filter(window_id=window.id_window).filter(time_close = None).exists():
+            Ticket = Tickets.objects.get(window_id=window.id_window, time_close = None)
+            Ticket.time_close = datetime.now()
+            Ticket.status = 'Закрыт'
+            Ticket.save()
+
         request.session['window_id'] = None
         return JsonResponse({}, status=200)
 
@@ -403,6 +410,14 @@ def returnbutton(request):
                 services.append(ser['rusname'])
 
         window_id = request.session.get('window_id')
+        if request.session.get('Ticket_n') != None:
+            id=request.session.get('Ticket_n')
+            Ticket = Tickets.objects.get(id_ticket=request.session.get('Ticket_n'))
+            Ticket.time_close = datetime.now()
+            Ticket.status = 'Закрыт'
+            Ticket.operator = User.objects.get(id = request.user.id)
+            Ticket.save()
+
         Ticket = Tickets.objects.filter(status = 'Отложен').filter(window = window_id).earliest('id_ticket')
         Ticket.time_pause += datetime.now() - Ticket.time_call.replace(tzinfo=None)
         Ticket.time_call = datetime.now()
