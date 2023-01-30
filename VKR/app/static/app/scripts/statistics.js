@@ -34,7 +34,7 @@ $(document).ready(function () {
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
             arr = response.listoftickets;
-            $('.stattable').prepend('<th>Имя талона</th><th>Услуга</th><th>Статус</th><th>Время выдачи</th><th>Время вызова</th><th>Время закрытия</th><th>Окно</th><th>Оператор</th>');
+            $('.stattable').prepend('<th>Имя талона</th><th>Услуга</th><th>Статус</th><th>Время выдачи</th><th>Время вызова</th><th>Время закрытия</th><th>Окно</th><th>Оператор</th><th>Время пауз</th>');
             arr.forEach(function (item, i, arr) {
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>'+
@@ -44,6 +44,7 @@ $(document).ready(function () {
                     '<td>' + item[5] + '</td>' +
                     '<td>' + item[6] + '</td>' +
                     '<td>' + item[7] + '</td>' +
+                    '<td>' + item[8] + '</td>' +
                     '</tr > ');
             });
         }
@@ -89,7 +90,7 @@ $('table').on('click', '.settings-btn', function () {
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
             arr = response.listoftickets;
-            $('.stattable').prepend('<th>Имя талона</th><th>Услуга</th><th>Статус</th><th>Время выдачи</th><th>Время вызова</th><th>Время закрытия</th><th>Окно</th><th>Оператор</th>');
+            $('.stattable').prepend('<th>Имя талона</th><th>Услуга</th><th>Статус</th><th>Время выдачи</th><th>Время вызова</th><th>Время закрытия</th><th>Окно</th><th>Оператор</th><th>Время пауз</th>');
             arr.forEach(function (item, i, arr) {
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>' +
@@ -99,6 +100,7 @@ $('table').on('click', '.settings-btn', function () {
                     '<td>' + item[5] + '</td>' +
                     '<td>' + item[6] + '</td>' +
                     '<td>' + item[7] + '</td>' +
+                    '<td>' + item[8] + '</td>' +
                     '</tr > ');
             });
         }

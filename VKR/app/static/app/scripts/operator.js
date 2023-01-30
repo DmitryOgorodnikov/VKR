@@ -106,9 +106,13 @@ $('#Redirect').click(function () {
             else
                 $('#myModal').css('display', 'flex');
                 $('#id_id_window option').remove();
+            if (response.windows_l.length != 0) {
+                $('#Red').removeAttr('disabled');
                 for (var i = 0; i < response.windows_l.length; i++) {
                     $('#id_id_window').prepend('<option value="' + (i + 1) + '">' + response.windows_l[i] + '</option>');
                 }
+            }
+            else $('#Red').attr('disabled', true);
         }
     });
 });

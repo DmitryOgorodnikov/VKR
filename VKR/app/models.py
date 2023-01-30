@@ -25,6 +25,7 @@ class LogWindows (models.Model):
     operator = models.ForeignKey(User, on_delete=models.PROTECT, null=True, verbose_name="Оператор")
     time_login = models.DateTimeField(auto_now_add=True, verbose_name="Время входа")
     time_logout = models.DateTimeField(null=True, verbose_name="Время выхода")
+    time_pause = models.DurationField(default=timedelta(seconds=0), verbose_name="Время пауз")
 
 class Tickets (models.Model):
     id_ticket = models.IntegerField(primary_key=True, verbose_name="ID талона")

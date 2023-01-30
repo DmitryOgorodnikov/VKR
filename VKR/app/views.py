@@ -200,7 +200,16 @@ def operatorbutton(request):
 @login_required
 def nextbutton(request):
     t = datetime.now().date()
+    window_id = request.session.get('window_id')
     if request.POST.get('click', False):
+        if request.session.get('time_pause') != None:
+            logwindow = LogWindows.objects.filter(window_id = window_id).last()
+            tt = datetime.now()
+            tt = tt.replace(hour = request.session.get('time_pause').get('hour'), minute = request.session.get('time_pause').get('minute'), second = request.session.get('time_pause').get('second'), microsecond = 0)
+            logwindow.time_pause = datetime.now()-tt + logwindow.time_pause
+            logwindow.save()
+            request.session['time_pause'] is None
+
         service = Windows.objects.get(id_window = request.session.get('window_id')).services
         services = []
         for ser in service:
@@ -352,6 +361,7 @@ def breakbutton(request):
         service = 'Услуга: '
 
         time = Ticket.time_close
+        request.session['time_pause'] = {'hour': time.hour, 'minute': time.minute, 'second': time.second}
         hour = time.hour
         minute = time.minute
         second = time.second
@@ -439,16 +449,17 @@ def returnbutton(request):
 def redirectbutton(request):
     if request.POST.get('click', False):
         windows_l = []
-        for l in Windows.objects.exclude(id_window = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window'):
-            windows_l.append(l[0])
+        if Windows.objects.exclude(operator = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window').exists():
+            for l in Windows.objects.exclude(id_window = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window'):
+                windows_l.append(l[0])
 
         return JsonResponse({"windows_l": windows_l}, status=200)
 
 @login_required
 def redbutton(request):
     t = datetime.now().date()
-    red_window_id = request.POST.get("name")
     if request.POST.get('click', False):
+        red_window_id = request.POST.get("name")
         service = Windows.objects.get(id_window = request.session.get('window_id')).services
         services = []
         for ser in service:
@@ -532,8 +543,17 @@ def statisticstable(request):
                 op = ''
             else:
                 op = p.operator.last_name +' ('+ p.operator.username +')'
+            if p.time_pause == timedelta(0):
+                tpause = ''
+            else:
+                minute = p.time_pause.seconds//60
+                hour = minute//60
+                minute = minute%60
+                second = p.time_pause.seconds%60
+                tpause = datetime.now().time()
+                tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
 
-            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op])
+            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause])
         return JsonResponse({'listoftickets': listoftickets}, status=200)
 
     if request.GET.get('click2', False):
@@ -565,8 +585,17 @@ def statisticstable(request):
                 op = ''
             else:
                 op = p.operator.last_name +' ('+ p.operator.username +')'
+            if p.time_pause == timedelta(0):
+                tpause = ''
+            else:
+                minute = p.time_pause.seconds//60
+                hour = minute//60
+                minute = minute%60
+                second = p.time_pause.seconds%60
+                tpause = datetime.now().time()
+                tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
 
-            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op])
+            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause])
         return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
 
 @login_required
@@ -599,7 +628,16 @@ def statisticstablew(request):
             else:
                 tlogout = p.time_logout.time().strftime("%H:%M:%S")
                 tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
-            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice])
+            if p.time_pause == timedelta(0):
+                tpause = ''
+            else:
+                minute = p.time_pause.seconds//60
+                hour = minute//60
+                minute = minute%60
+                second = p.time_pause.seconds%60
+                tpause = datetime.now().time()
+                tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
+            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause])
         return JsonResponse({'listoflogwindows': listoflogwindows}, status=200)
 
     if request.GET.get('click2', False):
@@ -618,7 +656,16 @@ def statisticstablew(request):
             else:
                 tlogout = p.time_logout.time().strftime("%H:%M:%S")
                 tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
-            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice])
+            if p.time_pause == timedelta(0):
+                tpause = ''
+            else:
+                minute = p.time_pause.seconds//60
+                hour = minute//60
+                minute = minute%60
+                second = p.time_pause.seconds%60
+                tpause = datetime.now().time()
+                tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
+            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause])
         return JsonResponse({'date': date, 'listoflogwindows': listoflogwindows}, status=200)
 
 @login_required

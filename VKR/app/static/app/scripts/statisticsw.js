@@ -34,13 +34,14 @@ $(document).ready(function () {
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
             arr = response.listoflogwindows;
-            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th>');
+            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th><th>Время пауз</th>');
             arr.forEach(function (item, i, arr) {
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>' +
                     '<td>' + item[2] + '</td>' +
                     '<td>' + item[3] + '</td>' +
                     '<td>' + item[4] + '</td>' +
+                    '<td>' + item[5] + '</td>' +
                     '</tr > ');
             });
         }
@@ -86,13 +87,14 @@ $('table').on('click', '.settings-btn', function () {
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
             arr = response.listoflogwindows;
-            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th>');
+            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th><th>Время пауз</th>');
             arr.forEach(function (item, i, arr) {
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>' +
                     '<td>' + item[2] + '</td>' +
                     '<td>' + item[3] + '</td>' +
                     '<td>' + item[4] + '</td>' +
+                    '<td>' + item[5] + '</td>' +
                     '</tr > ');
             });
         }

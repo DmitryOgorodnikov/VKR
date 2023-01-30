@@ -179,19 +179,19 @@ input[type="checkbox"].input-validation-error {
     user-select: none;
 }
 
-    .windows-btn:focus {
-        outline: thin dotted #333;
-        outline: 5px auto -webkit-focus-ring-color;
-        outline-offset: -2px;
-    }
+.windows-btn:focus {
+    outline: thin dotted #333;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
 
-    .windows-btn:hover,
-    .windows-btn:focus {
-        color: #333333;
-        text-decoration: none;
-        background-color: #ebebeb;
-        border-color: #adadad;
-    }
+.windows-btn:hover,
+.windows-btn:focus {
+    color: #333333;
+    text-decoration: none;
+    background-color: #ebebeb;
+    border-color: #adadad;
+}
 
 .windows-btn-hidden {
     display: none;
@@ -245,12 +245,19 @@ input[type="checkbox"].input-validation-error {
     margin-bottom: 10px;
 }
 
-    .operator-btn:disabled {
-        color: #333333;
-        text-decoration: none;
-        background-color: #A9A9A9;
-        border-color: #adadad;
-    }
+.operator-btn:disabled {
+    color: #333333;
+    text-decoration: none;
+    background-color: #A9A9A9;
+    border-color: #adadad;
+}
+
+.modal-btn:disabled {
+    color: #333333;
+    text-decoration: none;
+    background-color: #A9A9A9;
+    border-color: #adadad;
+}
 
 .statistics-div {
     height: 610px;
