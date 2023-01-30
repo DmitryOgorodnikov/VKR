@@ -26,7 +26,6 @@ import codecs
 
 # Страница киоска
 def kiosk(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -165,7 +164,6 @@ def windowbutton(request):
 
 @login_required
 def operator(request):
-    assert isinstance(request, HttpRequest)
     window_id = request.session.get('window_id')
     form = WindowsAuthenticationForm()
     return render(
@@ -478,7 +476,6 @@ def redbutton(request):
 # Статистика
 @login_required
 def statistics(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -559,7 +556,6 @@ def statisticstable(request):
 
 @login_required
 def statisticsw(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -612,7 +608,6 @@ def statisticstablew(request):
 
 @login_required
 def statisticsall(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -669,7 +664,6 @@ def statisticstableall(request):
 # Настройки
 @login_required
 def settings(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -776,7 +770,6 @@ def settingstable(request):
 
 @login_required
 def settingsw(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -844,7 +837,6 @@ def changestatusw(request):
 @login_required
 def changeservicew(request):
     if request.POST.get('click', False):
-        assert isinstance(request, HttpRequest)
         idwindow = request.POST.get('idwindow')
         request.session['idwindow'] = idwindow
         return JsonResponse({}, status=200)
@@ -855,7 +847,6 @@ def settingswchange(request):
         idwindow = request.session.get('idwindow')
     else:
         idwindow = request.session.get('idwindow')
-        assert isinstance(request, HttpRequest)
         return render(
             request,
             'app/settingswchange.html',
@@ -915,7 +906,6 @@ def wchange(request):
 
 @login_required
 def settingso(request):
-    assert isinstance(request, HttpRequest)
     with open('config.json', 'r', encoding='utf-8-sig') as f:
         my_json_obj = json.load(f)
         opsname = my_json_obj[0]['name']
@@ -954,7 +944,6 @@ def settingsm(request):
         return JsonResponse({}, status=200)
 
     else:
-        assert isinstance(request, HttpRequest)
         with open('config.json', 'r', encoding='utf-8-sig') as f:
             my_json_obj = json.load(f)
             opsname = my_json_obj[0]['name']
