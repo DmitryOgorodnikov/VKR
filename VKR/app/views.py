@@ -4,22 +4,15 @@ Definition of views.
 
 from datetime import datetime
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse
-
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.decorators import login_required
 from .models import Tickets, Windows, Services, Profile, LogWindows
 from django.contrib.auth.models import User
 from .forms import UserRegistrationForm, UserChangeForm, WindowsAuthenticationForm
 from django.db.models import Avg, F
 from datetime import timedelta
-from django_tables2 import SingleTableView, MultiTableMixin
-from django.views.generic.base import TemplateView
-from django.db.models.functions import Round
 from distutils.util import strtobool
-from django import forms
 from django.contrib.sessions.models import Session
-from django.contrib.auth import logout
-
 
 import json
 import codecs

@@ -4,10 +4,8 @@ Definition of models.
 
 from django.db import models
 
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from datetime import timedelta
-
-# Create your models here.
 
 class Services (models.Model):
     id_services = models.AutoField(primary_key=True, verbose_name="ID набора сервисов")
