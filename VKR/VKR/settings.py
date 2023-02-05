@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 import posixpath
 
+from django.core.management.commands.runserver import Command as runserver
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -26,6 +28,9 @@ SECRET_KEY = '5817373f-51a5-4a3b-b168-9128c3cbb45b'
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.1.38', '192.168.1.134','localhost','10.0.2.2']
+
+runserver.default_port = '5000'
+runserver.default_addr = '0.0.0.0'
 
 # Application references
 # https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-INSTALLED_APPS

@@ -203,7 +203,7 @@ def nextbutton(request):
             logwindow.save()
             request.session['time_pause'] is None
 
-        service = Windows.objects.get(id_window = request.session.get('window_id')).services
+        service = Windows.objects.get(operator = request.user).services
         services = []
         for ser in service:
             if ser['status'] == True:
@@ -238,7 +238,7 @@ def nextbutton(request):
 
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
-        elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
+        elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and (Tickets.objects.filter(time_create__contains = t).exclude(status = 'Отложен').filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга:'
             request.session['ticket'] = ticket
