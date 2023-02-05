@@ -91,12 +91,12 @@ def tickets(request):
     listofticketsw = []
 
     if Tickets.objects.filter(time_create__contains = t).filter(window_id = None).exists():
-        tickets = Tickets.objects.filter(time_create__contains = t).filter(window_id = None)
+        tickets = Tickets.objects.filter(time_create__contains = t).filter(window_id = None).order_by('-time_create')
         for p in tickets:
             listoftickets.append(p.name_ticket)
 
     if Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван").exists():
-        ticketsw = Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван")
+        ticketsw = Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван").order_by('time_create')
         for p in ticketsw:
             listofticketsw.append(p.name_ticket + ' - ' + str(p.window_id))
     return JsonResponse({'listoftickets': listoftickets, 'listofticketsw': listofticketsw}, status=200)
@@ -157,7 +157,7 @@ def windowbutton(request):
 
 @login_required
 def operator(request):
-    window_id = request.session.get('window_id')
+    window_id = Windows.objects.get(operator = request.user).id_window
     form = WindowsAuthenticationForm()
     return render(
         request,
