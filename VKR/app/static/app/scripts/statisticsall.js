@@ -35,7 +35,6 @@ $('table').on('click', '.settings-btn', function () {
 
 
 var charts = function (response) {
-    var nt = []
     var ctx1 = document.getElementById('myChart1').getContext('2d');
     var myChart1 = new Chart(ctx1, {
         type: 'bar',
