@@ -18,9 +18,6 @@ https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 
 import os
 from django.core.wsgi import get_wsgi_application
-
-from django.dispatch import receiver
-from django.db.backends.signals import connection_created
 from app.models import Windows, Services, Tickets
 from datetime import datetime
 import json

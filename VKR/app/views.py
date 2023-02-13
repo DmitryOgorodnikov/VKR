@@ -1,8 +1,4 @@
-"""
-Definition of views.
-"""
-
-from asyncio.windows_events import NULL
+#Представления
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, JsonResponse
@@ -14,7 +10,6 @@ from django.db.models import Avg, F
 from datetime import timedelta
 from distutils.util import strtobool
 from django.contrib.sessions.models import Session
-
 import json
 import codecs
 
@@ -32,11 +27,13 @@ def kiosk(request):
         }
     )
 
+# Возвращет список услуг для генерации кнопок на странице киоска
 def kioskbtn(request):
     if request.GET.get('click', False):
         serviceslist = Services.objects.latest('id_services').services
         return JsonResponse({'serviceslist':serviceslist}, status=200)
 
+#Создает талон после нажатия кнопки услуги
 def kbutton(request):
     if request.POST.get('click', False):
         Ticket = Tickets()
@@ -85,7 +82,7 @@ def kbutton(request):
 
         return JsonResponse({'ticketname': r, 'printcheck': printcheck}, status=200)
 
-
+#Создает талон после нажатия кнопки услуги
 def tickets(request):
     t = datetime.now().date()
     listoftickets = []
@@ -186,10 +183,10 @@ def operator(request):
 def operatorbutton(request):
     window_id = request.session.get('window_id')
     if request.GET.get('click', False):
-        window = Windows.objects.get(id_window = window_id)
+        window = Windows.objects.get(operator = request.user)
         window.operator_id = None
         window.save()
-        logwindow = LogWindows.objects.filter(window_id = window_id).last()
+        logwindow = LogWindows.objects.filter(window_id = window.id_window).last()
         logwindow.time_logout = datetime.now()
         logwindow.save()
 
@@ -259,7 +256,7 @@ def nextbutton(request):
         elif request.session.get('Ticket_n') is None:
             window_id = request.session.get('window_id')
             Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).earliest('id_ticket')
-            Ticket.window = Windows.objects.get(id_window=window_id)
+            Ticket.window = Windows.objects.get(operator = request.user)
             Ticket.time_call = datetime.now()
             Ticket.status = 'Вызван'
             Ticket.operator = User.objects.get(id = request.user.id)

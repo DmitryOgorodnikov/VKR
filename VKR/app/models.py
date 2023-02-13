@@ -1,10 +1,6 @@
-"""
-Definition of models.
-"""
-
-from django.db import models
-
+#Обьявления классов-моделей для БД
 from django.contrib.auth.models import User
+from django.db import models
 from datetime import timedelta
 
 class Services (models.Model):
