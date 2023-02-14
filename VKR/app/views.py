@@ -33,7 +33,7 @@ def kioskbtn(request):
         serviceslist = Services.objects.latest('id_services').services
         return JsonResponse({'serviceslist':serviceslist}, status=200)
 
-#Создает талон после нажатия кнопки услуги
+# Создает талон после нажатия кнопки услуги
 def kbutton(request):
     if request.POST.get('click', False):
         Ticket = Tickets()
@@ -53,7 +53,6 @@ def kbutton(request):
                 r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').latest("id_ticket").name_ticket
                 x = int(r[-3:]) + 1
                 r = r[0:3] + ' ' + str(f'{x:03}')
-
         elif len(name) == 2:
             name = list(name[0])[0] + list(name[1])[0]
             if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').exists() == False:
@@ -62,7 +61,6 @@ def kbutton(request):
                 r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').latest("id_ticket").name_ticket
                 x = int(r[-3:]) + 1
                 r = r[0:2] + ' ' + str(f'{x:03}')
-
         else:
             name = list(name[0])[0]
             if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').exists() == False:
@@ -75,30 +73,27 @@ def kbutton(request):
         Ticket.status = 'Выдан'
         Ticket.time_create = datetime.now()
         Ticket.save()
-
         with open('config.json', 'r', encoding='utf-8-sig') as f:
             my_json_obj = json.load(f)
             printcheck = my_json_obj[0]['print']
-
         return JsonResponse({'ticketname': r, 'printcheck': printcheck}, status=200)
 
-#Создает талон после нажатия кнопки услуги
+# Возвращает список талонов для центрального табло
 def tickets(request):
     t = datetime.now().date()
     listoftickets = []
     listofticketsw = []
-
     if Tickets.objects.filter(time_create__contains = t).filter(window_id = None).exists():
         tickets = Tickets.objects.filter(time_create__contains = t).filter(window_id = None).order_by('-time_create')
         for p in tickets:
             listoftickets.append(p.name_ticket)
-
     if Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван").exists():
         ticketsw = Tickets.objects.filter(time_create__contains = t).exclude(window_id = None).filter(time_close = None).filter(status = "Вызван").order_by('time_create')
         for p in ticketsw:
             listofticketsw.append(p.name_ticket + ' - ' + str(p.window_id))
     return JsonResponse({'listoftickets': listoftickets, 'listofticketsw': listofticketsw}, status=200)
 
+# Возвращает талон для вызова
 def ticketscall(request):
     t = datetime.now()
     if Tickets.objects.filter(time_create__contains = t.date()).exclude(window_id = None).filter(time_call__gt = t - timedelta(seconds=10)).exists():
@@ -110,7 +105,7 @@ def ticketscall(request):
        return JsonResponse({}, status=200)
 
 
-# Основная страница
+# Главное меню
 @login_required
 def home(request):
     operator = request.user
@@ -126,7 +121,7 @@ def home(request):
         return HttpResponseRedirect('./service/')
 
 
-# Пульт оператора
+# Страница выбора окна
 @login_required
 def service(request):
     if (Windows.objects.filter(operator = request.user).exists() != False):
@@ -143,14 +138,13 @@ def service(request):
             }
         )
 
+# Принимает выбранное окно и прописывает пользователя в нем и в логе окон
 def windowbutton(request):
     if request.GET.get('click', False):
         windows_l = []
         for l in Windows.objects.filter(operator = None).filter(status = True).values_list('id_window').order_by('id_window'):
             windows_l.append(l[0])
-
         return JsonResponse({"windows_l": windows_l}, status=200)
-
     if request.POST.get('click', False):
         window_id = request.POST.get("name")
         request.session['window_id'] = window_id
@@ -164,6 +158,7 @@ def windowbutton(request):
         logwindow.save()
         return JsonResponse({}, status=200)
 
+# Пульт оператора
 @login_required
 def operator(request):
     window_id = Windows.objects.get(operator = request.user).id_window
@@ -179,6 +174,7 @@ def operator(request):
         }
     )
 
+# Кнопка для смены окна
 @login_required
 def operatorbutton(request):
     window_id = request.session.get('window_id')
@@ -189,16 +185,15 @@ def operatorbutton(request):
         logwindow = LogWindows.objects.filter(window_id = window.id_window).last()
         logwindow.time_logout = datetime.now()
         logwindow.save()
-
         if Tickets.objects.filter(window_id=window.id_window).filter(time_close = None).exists():
             Ticket = Tickets.objects.get(window_id=window.id_window, time_close = None)
             Ticket.time_close = datetime.now()
             Ticket.status = 'Закрыт'
             Ticket.save()
-
         request.session['window_id'] = None
         return JsonResponse({}, status=200)
 
+# Кнопка "Следующий"
 @login_required
 def nextbutton(request):
     t = datetime.now().date()
@@ -211,15 +206,12 @@ def nextbutton(request):
             logwindow.time_pause = datetime.now()-tt + logwindow.time_pause
             logwindow.save()
             request.session['time_pause'] is None
-
         service = Windows.objects.get(operator = request.user).services
         services = []
         for ser in service:
             if ser['status'] == True:
                 services.append(ser['rusname'])
-
         if (Tickets.objects.filter(time_close = None).filter(window = request.session.get('window_id')).filter(status = 'Перенаправлен')):
-
             if (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = request.session.get('window_id')).exists() == True) and (request.session.get('Ticket_n') != None):
                 id=request.session.get('Ticket_n')
                 Ticket = Tickets.objects.get(id_ticket=request.session.get('Ticket_n'))
@@ -227,7 +219,6 @@ def nextbutton(request):
                 Ticket.status = 'Закрыт'
                 Ticket.operator = User.objects.get(id = request.user.id)
                 Ticket.save()
-
             window_id = request.session.get('window_id')
             Ticket = Tickets.objects.filter(time_close = None).filter(window = request.session.get('window_id')).earliest('id_ticket')
             Ticket.window = Windows.objects.get(id_window=window_id)
@@ -239,20 +230,16 @@ def nextbutton(request):
             service = 'Услуга: ' + Ticket.service
             request.session['ticket'] = ticket
             request.session['Ticket_n'] = Ticket.id_ticket
-
             time = Ticket.time_call
             hour = time.hour
             minute = time.minute
             second = time.second
-
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
-
         elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and (Tickets.objects.filter(time_create__contains = t).exclude(status = 'Отложен').filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга:'
             request.session['ticket'] = ticket
             return JsonResponse({"ticket": ticket, 'service': service}, status=200)
-
         elif request.session.get('Ticket_n') is None:
             window_id = request.session.get('window_id')
             Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).earliest('id_ticket')
@@ -265,15 +252,11 @@ def nextbutton(request):
             service = 'Услуга: ' + Ticket.service
             request.session['ticket'] = ticket
             request.session['Ticket_n'] = Ticket.id_ticket
-
             time = Ticket.time_call
             hour = time.hour
             minute = time.minute
             second = time.second
-
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
-
-
         else:
             id=request.session.get('Ticket_n')
             Ticket = Tickets.objects.get(id_ticket=request.session.get('Ticket_n'))
@@ -281,14 +264,12 @@ def nextbutton(request):
             Ticket.status = 'Закрыт'
             Ticket.operator = User.objects.get(id = request.user.id)
             Ticket.save()
-
             if Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False:
                 ticket = 'Текущий талон: Нет талонов в очереди'
                 service = 'Услуга:'
                 request.session['ticket'] = ticket
                 request.session['Ticket_n'] = None
                 return JsonResponse({"ticket": ticket, 'service': service}, status=200)
-
             window_id = request.session.get('window_id')
             Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(service__in = services).filter(window = None).filter(service__in = services).earliest('id_ticket')
             Ticket.window = Windows.objects.get(id_window=window_id)
@@ -300,14 +281,13 @@ def nextbutton(request):
             service = 'Услуга: ' + Ticket.service
             request.session['ticket'] = ticket
             request.session['Ticket_n'] = Ticket.id_ticket
-
             time = Ticket.time_call
             hour = time.hour
             minute = time.minute
             second = time.second
-
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+# Кнопка "Клиент не подошел"
 @login_required
 def cancelbutton(request):
     t = datetime.now().date()
@@ -317,20 +297,17 @@ def cancelbutton(request):
         for ser in service:
             if ser['status'] == True:
                 services.append(ser['rusname'])
-
         Ticket = (Tickets.objects.filter(id_ticket=request.session.get('Ticket_n')))[0]
         Ticket.time_close = datetime.now()
         Ticket.status = 'Отменен'
         Ticket.operator = User.objects.get(id = request.user.id)
         Ticket.save()
-
         if Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False:
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга: '
             request.session['ticket'] = ticket
             request.session['Ticket_n'] = None
             return JsonResponse({"ticket": ticket, 'service': service}, status=200)
-
         window_id = request.session.get('window_id')
         Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).earliest('id_ticket')
         Ticket.window = Windows.objects.get(id_window=window_id)
@@ -342,18 +319,16 @@ def cancelbutton(request):
         service = 'Услуга: ' + Ticket.service
         request.session['ticket'] = ticket
         request.session['Ticket_n'] = Ticket.id_ticket
-
         time = Ticket.time_call
         hour = time.hour
         minute = time.minute
         second = time.second
-
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+# Кнопка "Перерыв"
 @login_required
 def breakbutton(request):
     if request.POST.get('click', False):
-
         Ticket = (Tickets.objects.filter(id_ticket=request.session.get('Ticket_n')))[0]
         Ticket.time_close = datetime.now()
         Ticket.status = 'Закрыт'
@@ -361,15 +336,14 @@ def breakbutton(request):
         Ticket.save()
         ticket = 'Текущий талон: Перерыв'
         service = 'Услуга: '
-
         time = Ticket.time_close
         request.session['time_pause'] = {'hour': time.hour, 'minute': time.minute, 'second': time.second}
         hour = time.hour
         minute = time.minute
         second = time.second
-
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+# Кнопка "Отложить"
 @login_required
 def delaybutton(request):
     t = datetime.now().date()
@@ -379,19 +353,16 @@ def delaybutton(request):
         for ser in service:
             if ser['status'] == True:
                 services.append(ser['rusname'])
-
         Ticket = (Tickets.objects.filter(id_ticket=request.session.get('Ticket_n')))[0]
         Ticket.status = 'Отложен'
         ticket_r = Ticket.name_ticket
         Ticket.save()
-
         if Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False:
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга: '
             request.session['ticket'] = ticket
             request.session['Ticket_n'] = None
             return JsonResponse({"ticket": ticket, 'service': service, "ticket_r": ticket_r}, status=200)
-
         window_id = request.session.get('window_id')
         Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).earliest('id_ticket')
         Ticket.window = Windows.objects.get(id_window=window_id)
@@ -403,14 +374,13 @@ def delaybutton(request):
         service = 'Услуга: ' + Ticket.service
         request.session['ticket'] = ticket
         request.session['Ticket_n'] = Ticket.id_ticket
-
         time = Ticket.time_call
         hour = time.hour
         minute = time.minute
         second = time.second
-
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second, "ticket_r": ticket_r}, status=200)
 
+# Кнопка "Вернуть"
 @login_required
 def returnbutton(request):
     t = datetime.now().date()
@@ -420,7 +390,6 @@ def returnbutton(request):
         for ser in service:
             if ser['status'] == True:
                 services.append(ser['rusname'])
-
         window_id = request.session.get('window_id')
         if request.session.get('Ticket_n') != None:
             id=request.session.get('Ticket_n')
@@ -429,7 +398,6 @@ def returnbutton(request):
             Ticket.status = 'Закрыт'
             Ticket.operator = User.objects.get(id = request.user.id)
             Ticket.save()
-
         Ticket = Tickets.objects.filter(status = 'Отложен').filter(window = window_id).earliest('id_ticket')
         Ticket.time_pause += datetime.now() - Ticket.time_call.replace(tzinfo=None)
         Ticket.time_call = datetime.now()
@@ -439,14 +407,13 @@ def returnbutton(request):
         service = 'Услуга: ' + Ticket.service
         request.session['ticket'] = ticket
         request.session['Ticket_n'] = Ticket.id_ticket
-
         time = Ticket.time_call
         hour = time.hour
         minute = time.minute
         second = time.second
-
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
+# Кнопка "Перенаправить"
 @login_required
 def redirectbutton(request):
     if request.POST.get('click', False):
@@ -454,9 +421,9 @@ def redirectbutton(request):
         if Windows.objects.exclude(operator = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window').exists():
             for l in Windows.objects.exclude(id_window = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window'):
                 windows_l.append(l[0])
-
         return JsonResponse({"windows_l": windows_l}, status=200)
 
+# Кнопка "Отправить" в модельном окне перенаправления
 @login_required
 def redbutton(request):
     t = datetime.now().date()
@@ -467,20 +434,17 @@ def redbutton(request):
         for ser in service:
             if ser['status'] == True:
                 services.append(ser['rusname'])
-
         id=request.session.get('Ticket_n')
         Ticket = Tickets.objects.get(id_ticket=request.session.get('Ticket_n'))
         Ticket.window = Windows.objects.get(id_window=red_window_id)
         Ticket.status = 'Перенаправлен'
         Ticket.save()
-
         if Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False:
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга:'
             request.session['ticket'] = ticket
             request.session['Ticket_n'] = None
             return JsonResponse({"ticket": ticket, 'service': service}, status=200)
-
         window_id = request.session.get('window_id')
         Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(service__in = services).filter(window = None).filter(service__in = services).earliest('id_ticket')
         Ticket.window = Windows.objects.get(id_window=window_id)
@@ -492,16 +456,14 @@ def redbutton(request):
         service = 'Услуга: ' + Ticket.service
         request.session['ticket'] = ticket
         request.session['Ticket_n'] = Ticket.id_ticket
-
         time = Ticket.time_call
         hour = time.hour
         minute = time.minute
         second = time.second
-
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
 
 
-# Статистика
+# Экран лога талонов
 @login_required
 def statistics(request):
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -517,6 +479,7 @@ def statistics(request):
         }
     )
 
+# Возвращает данные для таблицы лога талонов
 @login_required
 def statisticstable(request):
     if request.GET.get('click', False):
@@ -525,12 +488,10 @@ def statisticstable(request):
         tickets = Tickets.objects.filter(time_create__contains = t).order_by('id_ticket')
         for p in tickets:
             tc = p.time_create.time().strftime("%H:%M:%S")
-
             if p.time_call == None:
                 tca = ''
             else:
                 tca = p.time_call.time().strftime("%H:%M:%S")
-
             if p.time_close == None:
                 tcl = ''
             else:
@@ -554,10 +515,8 @@ def statisticstable(request):
                 second = p.time_pause.seconds%60
                 tpause = datetime.now().time()
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
-
             listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause])
         return JsonResponse({'listoftickets': listoftickets}, status=200)
-
     if request.GET.get('click2', False):
         date = request.GET.get('date').split(', ')
         date[1] = str(int(date[1]) + 1)
@@ -567,22 +526,18 @@ def statisticstable(request):
         tickets = Tickets.objects.filter(time_create__contains = date).order_by('id_ticket')
         for p in tickets:
             tc = p.time_create.time().strftime("%H:%M:%S")
-
             if p.time_call == None:
                 tca = ''
             else:
                 tca = p.time_call.time().strftime("%H:%M:%S")
-
             if p.time_close == None:
                 tcl = ''
             else:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
-
             if p.window_id == None:
                 iw = ''
             else:
                 iw = p.window_id
-
             if p.operator == None:
                 op = ''
             else:
@@ -596,10 +551,10 @@ def statisticstable(request):
                 second = p.time_pause.seconds%60
                 tpause = datetime.now().time()
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
-
             listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause])
         return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
 
+# Страница лога окон
 @login_required
 def statisticsw(request):
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -615,6 +570,7 @@ def statisticsw(request):
         }
     )
 
+# Возвращает данные для таблицы лога окон
 @login_required
 def statisticstablew(request):
     if request.GET.get('click', False):
@@ -623,7 +579,6 @@ def statisticstablew(request):
         logwindow = LogWindows.objects.filter(time_login__contains = t).order_by('id_log')
         for p in logwindow:
             tlogin = p.time_login.time().strftime("%H:%M:%S")
-
             if p.time_logout == None:
                 tlogout = ''
                 tservice = ''
@@ -641,7 +596,6 @@ def statisticstablew(request):
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
             listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause])
         return JsonResponse({'listoflogwindows': listoflogwindows}, status=200)
-
     if request.GET.get('click2', False):
         date = request.GET.get('date').split(', ')
         date[1] = str(int(date[1]) + 1)
@@ -651,7 +605,6 @@ def statisticstablew(request):
         logwindow = LogWindows.objects.filter(time_login__contains = date).order_by('id_log')
         for p in logwindow:
             tlogin = p.time_login.time().strftime("%H:%M:%S")
-
             if p.time_logout == None:
                 tlogout = ''
                 tservice = ''
@@ -670,6 +623,7 @@ def statisticstablew(request):
             listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause])
         return JsonResponse({'date': date, 'listoflogwindows': listoflogwindows}, status=200)
 
+# Страница общей статистики
 @login_required
 def statisticsall(request):
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -685,10 +639,10 @@ def statisticsall(request):
         }
     )
 
+# Возвращает данные для страницы общей статистики
 @login_required
 def statisticstableall(request):
     if request.GET.get('click', False):
-
         service = Services.objects.latest('id_services').services
         services = []
         for ser in service:
@@ -711,7 +665,6 @@ def statisticstableall(request):
         nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '10').count())
         nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '11').count())
         nt.append (Tickets.objects.filter(time_create__year = t).filter(time_create__month = '12').count())
-        
         stc = []
         stat = []
         for s in services:
@@ -723,11 +676,10 @@ def statisticstableall(request):
                stat.append (temp.get('average_difference').seconds)
                if temp.get('average_difference').microseconds > 500000:
                    stat[0] += 1
-
         return JsonResponse({'nt': nt, 'stc': stc, 'services': services, 'stat': stat, 'date': t}, status=200)
 
 
-# Настройки
+# Страница настроек учетных записей
 @login_required
 def settings(request):
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -743,6 +695,7 @@ def settings(request):
         }
     )
 
+# Кнопка удаления учетной записи
 def delbutton(request):
     if request.POST.get('click', False):
         Userdel = (User.objects.filter(id=request.POST.get('idbutton')))[0]
@@ -751,6 +704,7 @@ def delbutton(request):
 
         return JsonResponse({}, status=200)
 
+# Кнопка редактирования пользователя
 @login_required
 def edituser(request):
     if request.POST.get('click', False):
@@ -759,6 +713,7 @@ def edituser(request):
         request.session['useredit'] = Useredit.id
         return JsonResponse({}, status=200)
 
+# Страница регистрации
 @login_required
 def register(request):
     if request.method == 'POST':
@@ -788,6 +743,7 @@ def register(request):
         }
     )
 
+# Страница редактирования пользователя
 @login_required
 def editer(request):
     Useredit = User.objects.filter(id = request.session.get('useredit'))[0]
@@ -824,6 +780,7 @@ def editer(request):
         }
     )
 
+# Предоставляет список пользователей
 @login_required
 def settingstable(request):
     if request.POST.get('click', False):
@@ -834,6 +791,7 @@ def settingstable(request):
 
         return JsonResponse({"user": user}, status=200)
 
+# Страница окон
 @login_required
 def settingsw(request):
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -849,6 +807,7 @@ def settingsw(request):
         }
     )
 
+# Предоставляет список окон
 @login_required
 def settingswtable(request):
     if request.GET.get('click', False):
@@ -860,9 +819,9 @@ def settingswtable(request):
             else:
                 operator = p.operator.username
             window.append([p.id_window, p.status, operator])
-
         return JsonResponse({"window": window}, status=200)
 
+# Кнопка добавления нового окна
 @login_required
 def addwindow(request):
     if request.POST.get('click', False):
@@ -871,6 +830,7 @@ def addwindow(request):
         window.save()
         return JsonResponse({}, status=200)
 
+# Кнопка сброса пользователя с окна
 @login_required
 def windowreset(request):
     if request.POST.get('click', False):
@@ -883,12 +843,11 @@ def windowreset(request):
             if s.get_decoded().get('_auth_user_id') == str(window.operator.id):
                 ses = Session.objects.get(pk = s.pk)
                 ses.delete()
-
-        
         window.operator = None
         window.save()
         return JsonResponse({}, status=200)
 
+# Кнопка изменения статуса окна
 @login_required
 def changestatusw(request):
     if request.POST.get('click', False):
@@ -900,6 +859,7 @@ def changestatusw(request):
         window.save()
         return JsonResponse({}, status=200)
 
+# Кнопка для перехода на страницу услуг окна
 @login_required
 def changeservicew(request):
     if request.POST.get('click', False):
@@ -907,6 +867,7 @@ def changeservicew(request):
         request.session['idwindow'] = idwindow
         return JsonResponse({}, status=200)
 
+# Страница услуг окна
 @login_required
 def settingswchange(request):
     if request.POST.get('click', False):
@@ -923,6 +884,7 @@ def settingswchange(request):
             }
         )
 
+# Возвращает список услуг для окна
 @login_required
 def servicestable(request):
     if request.GET.get('click', False):
@@ -933,6 +895,7 @@ def servicestable(request):
         serviceslist = Services.objects.latest('id_services').services
         return JsonResponse({'serviceslist':serviceslist}, status=200)
 
+# Кнопка применения изменений при изменении услуг
 @login_required
 def wchange(request):
     if request.GET.get('click', False):
@@ -945,7 +908,6 @@ def wchange(request):
             i += 1
         window.save()
         return JsonResponse({}, status=200)
-
     if request.POST.get('click2', False):
         listofcheck = request.POST.get('listofcheck')
         listofcheck = listofcheck.split()
@@ -970,6 +932,7 @@ def wchange(request):
                 i.save()
         return JsonResponse({}, status=200)
 
+# Страница услуг ОПС
 @login_required
 def settingso(request):
     with open('config.json', 'r', encoding='utf-8-sig') as f:
@@ -985,6 +948,7 @@ def settingso(request):
         }
     )
 
+# Страница настроек
 @login_required
 def settingsm(request):
     if request.GET.get('click1', False):
