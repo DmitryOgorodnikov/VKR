@@ -30,19 +30,15 @@ class UserRegistrationForm(forms.ModelForm):
     password2 = forms.CharField(label='Повторите пароль', widget=forms.PasswordInput({
                                    'class': 'form-control',
                                    'placeholder': ''}))
-
     chief = forms.BooleanField(label='Права начальника', required=False)
-
     class Meta:
         model = User
         fields = ('username', 'last_name')
-
     def clean_password2(self):
         cd = self.cleaned_data
         if cd['password'] != cd['password2']:
             raise forms.ValidationError('Пароли не совпадают!')
         return cd['password2']
-
     def clean_username(self):
         username = self.cleaned_data.get("username")
         try:
@@ -53,7 +49,6 @@ class UserRegistrationForm(forms.ModelForm):
 
 #Форма для редактирования пользователя
 class UserChangeForm(forms.ModelForm):
-
     username = forms.CharField(label='Логин', widget=forms.TextInput({
                                    'class': 'form-control',
                                    'placeholder': ''}))
@@ -66,20 +61,15 @@ class UserChangeForm(forms.ModelForm):
     password2 = forms.CharField(label='Повторите пароль', required=False, widget=forms.PasswordInput({
                                    'class': 'form-control',
                                    'placeholder': ''}))
-
     chief = forms.BooleanField(label='Права начальника', required=False)
-
-
     class Meta:
         model = User
         fields = ('id','username', 'last_name')
-
     def clean_password2(self):
         cd = self.cleaned_data
         if cd['password'] != cd['password2']:
             raise ValidationError('Пароли не совпадают')
         return cd['password2']
-
     def clean_username(self):
         username = self.cleaned_data.get("username")
         if self.instance.username != username:
