@@ -96,6 +96,7 @@
     <Content Include="app\templates\app\settingswchange.html" />
     <Content Include="app\templates\app\statisticsall.html" />
     <Content Include="app\templates\app\statisticsw.html" />
+    <Content Include="services - Copy.json" />
     <Content Include="services.json" />
     <Content Include="config.json" />
     <Content Include="requirements.txt" />

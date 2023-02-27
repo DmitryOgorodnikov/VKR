@@ -12,11 +12,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'app/content/site.css' %}" />
     <link rel="stylesheet" type="text/css" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
     <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
-    <div class="print" id="print-text">Текст</div>
 </head>
 
 <body class="kiosk-body">
+    <p id="opsname" name={{opsname}}></p>
+    <div class="print" id="print-text">Текст</div>
     <p class="kiosk-h">     ОПС {{opsname}}                        <span id="hour">hh</span>:<span id="min">mm</span> <span id="day">dd</span>.<span id="month">mm</span>.<span id="year">yy</span></p>
+    <p class="kiosk-h2"> </p>
     <div class="kiosk-div"></div>
 </body>
 

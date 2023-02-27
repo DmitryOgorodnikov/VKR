@@ -593,11 +593,23 @@ fieldset[disabled] .settings-btn {
     white-space: pre-wrap;
 }
 
+.kiosk-h2 {
+    position: absolute;
+    top: 60px;
+    width: 1280px;
+    font-family: 'abc';
+    font-weight: bold;
+    font-size: 50px;
+    text-align: center;
+    white-space: nowrap;
+}
+
 .kiosk-div {
     position: absolute;
     height: 600px;
     width: 1280px;
-    top: 100px;
+    top: 120px;
+    overflow-wrap: break-word;
 }
 
 .kiosk-div-button {
@@ -613,9 +625,10 @@ fieldset[disabled] .settings-btn {
     text-align: center;
 }
 
-    .kiosk-div-button p {
-        margin-top: 65px;
-    }
+.kiosk-div-button p {
+    margin-top: 65px;
+    white-space: normal;
+}
 
 @font-face {
     font-family: 'abc';

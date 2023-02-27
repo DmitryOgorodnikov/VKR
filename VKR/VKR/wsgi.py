@@ -38,7 +38,8 @@ with open('services.json', 'r', encoding='utf-8-sig') as f:
         service.save()
         ls = service.services
         for s in ls:
-            if s['status'] == False:
+            keys = list(s.keys())
+            if s[keys[0]] == False:
                 ls.remove(s)
         Window = Windows.objects.all()
         for i in Window:
