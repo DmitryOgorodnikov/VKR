@@ -44,7 +44,7 @@ def kbutton(request):
         t = datetime.now().date()
         name = request.POST.get('name')
         Ticket.service = name
-        name = name.split('-')[0]
+        name = name.split(' - ')[0]
         name = name.split()
         if len(name) == 3:
             name = list(name[0])[0] + list(name[1])[0] + list(name[2])[0]

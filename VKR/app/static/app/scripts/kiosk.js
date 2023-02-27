@@ -55,7 +55,7 @@ $('.kiosk-div').on('click', '#buttonservice', function () {
         if (arr[prop] != true)
             delete arr[prop];
         else
-            $('.kiosk-div').prepend('<div class="kiosk-div-button settings-btn" id="buttonticket" name="' + name + '-' + prop + '"><p>' + prop + '</p></div>');
+            $('.kiosk-div').prepend('<div class="kiosk-div-button settings-btn" id="buttonticket" name="' + name + ' - ' + prop + '"><p>' + prop + '</p></div>');
     }
     $('.kiosk-div').append('<div class="kiosk-div-button settings-btn" onclick="location.reload(); return false;";><p> Вернуться </p></div>');
 });
