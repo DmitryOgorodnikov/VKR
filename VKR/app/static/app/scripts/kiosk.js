@@ -69,16 +69,22 @@ $('.kiosk-div').on('click', '#buttonticket', function () {
             click: true
         },
         success: function (response) {
-            var modal = $modal({
-                title: 'Номер вашего талона',
-                content: '<p>' + response.ticketname + '</p>',
-            });
-            modal.show();
             if (response.printcheck == 1) {
-                $('#print-text').html(response.ticketname);
-                callPrint();
+                var modal = $modal({
+                    title: 'Номер вашего талона',
+                    content: '<p>' + response.ticketname + '</p>',
+                    footerButtons: [
+                        { class: 'btn-1', text: 'Распечатать', handler: 'handlerOkModal' }
+                    ],
+                });
             }
-            setTimeout(() => { location.reload();  }, 5000);
+            else
+                var modal = $modal({
+                    title: 'Номер вашего талона',
+                    content: '<p>' + response.ticketname + '</p>' + '<p class="warning">' + 'Запомните номер талона!' + '</p>',
+                });
+            modal.show();
+            setTimeout(() => { modal.hide(); }, 10000);
 
         }
     });

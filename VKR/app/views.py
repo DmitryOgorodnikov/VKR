@@ -43,7 +43,7 @@ def kbutton(request):
             Ticket.id_ticket = Tickets.objects.latest("id_ticket").id_ticket + 1
         t = datetime.now().date()
         name = request.POST.get('name')
-        Ticket.service = name
+        Ticket.service = name.split(' - ')[-1]
         name = name.split(' - ')[0]
         name = name.split()
         if len(name) == 3:
@@ -885,7 +885,7 @@ def settingswchange(request):
             }
         )
 
-# Возвращает список услуг для окна
+# Возвращает список услуг для окна или ОПС
 @login_required
 def servicestable(request):
     if request.GET.get('click', False):
@@ -911,6 +911,8 @@ def wchange(request):
         return JsonResponse({}, status=200)
     if request.POST.get('click2', False):
         listofcheck = request.POST.get('listofcheck')
+        listofcheck = json.loads(listofcheck)
+        #Продолжить тут
         listofcheck = listofcheck.split()
         service = Services.objects.latest('id_services')
         i = 0

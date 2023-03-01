@@ -14,16 +14,17 @@
     <script src="{% static 'app/scripts/modernizr-2.6.2.js' %}"></script>
 </head>
 
-<body class="kiosk-body">
-    <p id="opsname" name={{opsname}}></p>
-    <div class="print" id="print-text">Текст</div>
-    <p class="kiosk-h">     ОПС {{opsname}}                        <span id="hour">hh</span>:<span id="min">mm</span> <span id="day">dd</span>.<span id="month">mm</span>.<span id="year">yy</span></p>
-    <p class="kiosk-h2"> </p>
-    <div class="kiosk-div"></div>
+<body class="kiosk">
+    <div class="kiosk-body">
+        <p id="opsname" name={{opsname}}></p>
+        <div class="print" id="print-text">Текст</div>
+        <p class="kiosk-h">        ОПС {{opsname}}                        <span id="hour">hh</span>:<span id="min">mm</span> <span id="day">dd</span>.<span id="month">mm</span>.<span id="year">yy</span></p>
+        <p class="kiosk-h2"> </p>
+        <div class="kiosk-div"></div>
+        <h1 class="print" id="print-title">Талон</h1>
+        <div class="print" id="print-text"></div>
+    </div>
 </body>
-
-<h1 class="print" id="print-title">Талон</h1>
-<div class="print" id="print-text"></div>
 </html>
 {% block scripts %}
 

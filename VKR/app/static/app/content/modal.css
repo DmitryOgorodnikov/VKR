@@ -26,6 +26,9 @@
     font-size: 100px;
     text-align: center;
 }
+.warning {
+    font-size: 50px;
+}
 
 @media (min-width: 576px) {
     .content {
@@ -98,8 +101,30 @@
 }
 
 .btn-1 {
-    margin-left: 5px;
-    margin-right: 5px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 300px;
+    height: 100px;
+    font-size: 30px;
+    text-align: center;
+    background-color: #ffffff;
+    border-color: #cccccc;
+    border: 1px solid;
+    border-radius: 4px;
+}
+
+.btn-1:focus {
+    outline: thin dotted #333;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;
+}
+
+.btn-1:hover,
+.btn-1:focus {
+    color: #333333;
+    text-decoration: none;
+    background-color: #ebebeb;
+    border-color: #adadad;
 }
 
 .btn-2 {
