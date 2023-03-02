@@ -13,7 +13,7 @@ $(document).ready(function () {
                 var c = Object.keys(item).length;
                 if (item[Object.keys(item)[c - 1]] != true)
                     delete arr[i];
-                if (c < 2)
+                else if (c < 2)
                     $('.kiosk-div').prepend('<div class="kiosk-div-button settings-btn" id="buttonticket" name="' + Object.keys(item)[0] + '"><p>' + Object.keys(item)[0] + '</p></div>');
                 else
                     $('.kiosk-div').prepend('<div class="kiosk-div-button settings-btn" id="buttonservice" name="' + Object.keys(item)[c - 1] + '"><p>' + Object.keys(item)[c - 1] + '</p></div>');

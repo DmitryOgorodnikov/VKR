@@ -16,7 +16,7 @@ $(document).ready(function () {
                     else {
                         ch = '';
                     }
-                    $('table').prepend('<tr>' +
+                    $('table').prepend('<tr id="' + keys[0] +'">' +
                         '<td class="table1wc"><input type="checkbox" ' + ch + ' id="check" name="' + keys[0] + '">' + '</td>' +
                         '<td class="table1w" name="' + keys[0] + '">' + keys[0] + '</td>' +
                         '</tr> ');
@@ -28,7 +28,7 @@ $(document).ready(function () {
                             ch = 'checked';
                         else
                             ch = '';
-                        $('table').prepend('<tr class="table1wcd">' +
+                        $('table').prepend('<tr class="table1wcd" id="' + keys[1] +'">' +
                             '<td class= "table1wc"><input type = "checkbox" ' + ch + ' id = "check" name = "' + keys2[i] + '">' + '</td >' +
                             '<td class="table1w" name="' + keys2[i] + '">' + keys2[i] + '</td>' +
                             '</tr > ');
@@ -38,7 +38,7 @@ $(document).ready(function () {
                     else {
                         ch = '';
                     }
-                    $('table').prepend('<tr>'+
+                    $('table').prepend('<tr id="' + keys[1] +'">'+
                         '<td class="table1wc"><input type="checkbox" ' + ch + ' id="check" name="' + keys[1] + '">' + '</td>' +
                         '<td class="table1w" name="' + keys[1] + '">' + keys[1] + '</td>' +
                         '</tr> ');
@@ -66,4 +66,48 @@ $('.tablediv-input').click(function () {
             window.location.href = "../ops"
         }
     });
+});
+
+
+document.addEventListener('change', function () {
+    var chk = event.target;
+    var chkpar = chk.parentNode.parentNode;
+    var chkapsd;
+    var cheks;
+    var cheksup;
+    var cheksdown;
+    var count = 0;
+
+    if (chk.tagName === 'INPUT' && chk.type === 'checkbox') {
+        if (chkpar.className === 'table1wcd' && chk.checked === false) {
+            chkapsd = $(chkpar).prevAll().not('.table1wcd')[0];
+            cheksup = $(chkpar).prevUntil('tr:not(.table1wcd)');
+            cheksdown = $(chkpar).nextUntil('tr:not(.table1wcd)');
+
+            for (var i = 0; i < cheksup.length; i++) {
+                if (cheksup[i].children[0].children[0].checked === true) {
+                    count += 1;
+                }
+            }
+            for (var i = 0; i < cheksdown.length; i++) {
+                if (cheksdown[i].children[0].children[0].checked === true) {
+                    count += 1;
+                }
+            }
+            if (count === 0) {
+                chkapsd.children[0].children[0].checked = false;
+            }
+        }
+        else if (chkpar.className === 'table1wcd' && chk.checked === true) {
+            chkapsd = $(chkpar).prevAll().not('.table1wcd')[0];
+            chkapsd.children[0].children[0].checked = true;
+        }
+        if (chkpar.className === '') {
+            cheks = chkpar.children[0].children[0].checked
+            chkapsd = $(chkpar).nextUntil('tr:not(.table1wcd)');
+            for (var i = 0; i < chkapsd.length; i++) {
+                chkapsd[i].children[0].children[0].checked = cheks;
+            }
+        }
+    }
 });

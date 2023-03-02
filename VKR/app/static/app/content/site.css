@@ -403,14 +403,14 @@ input[type="checkbox"].input-validation-error {
 .table1w {
     width: 500px;
     position: relative;
-    left: -20px;
 }
 .table1wc {
     width: 30px;
 }
 
-.table1wcd td {
-    padding-left: 30px;
+.table1wcd {
+    left: 20px;
+    position:relative;
 }
 
 .left20{
@@ -419,6 +419,15 @@ input[type="checkbox"].input-validation-error {
 
 .tablediv {
     width: 100%;
+    margin: 0 auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.tabwc {
+    width: 50%;
     margin: 0 auto;
     padding-top: 10px;
     padding-bottom: 10px;

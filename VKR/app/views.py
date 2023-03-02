@@ -12,6 +12,8 @@ from distutils.util import strtobool
 from django.contrib.sessions.models import Session
 import json
 import codecs
+import re
+import array
 
 # Страница киоска
 def kiosk(request):
@@ -901,37 +903,58 @@ def servicestable(request):
 def wchange(request):
     if request.GET.get('click', False):
         listofcheck = request.GET.get('listofcheck')
-        listofcheck = listofcheck.split()
+        listofcheck = json.loads(listofcheck)
+        service = Services.objects.latest('id_services')
+        services = str(service.services)
         window = Windows.objects.get(id_window = request.session.get('idwindow'))
-        i = 0
+        services = str(window.services)
         for p in listofcheck:
-            window.services[i]['status'] = (p == 'true')
-            i += 1
+            k = "'" + str(list(p.keys())[0]) + "'"
+            v = str(list(p.values())[0]).lower()
+            services = services.replace(k + ': ' + 'False', k + ': ' + v)
+            services = services.replace(k + ': ' + 'True', k + ': ' + v)
+        services = services.replace("'",'"')
+        window.services = json.loads(services)
         window.save()
         return JsonResponse({}, status=200)
+
     if request.POST.get('click2', False):
         listofcheck = request.POST.get('listofcheck')
         listofcheck = json.loads(listofcheck)
-        #Продолжить тут
-        listofcheck = listofcheck.split()
         service = Services.objects.latest('id_services')
-        i = 0
+        services = str(service.services)
+
         for p in listofcheck:
-            service.services[i]['status'] = (p == 'true')
-            i += 1
-        listofservices = json.dumps(service.services, ensure_ascii=False)
+            k = "'" + str(list(p.keys())[0]) + "'"
+            v = str(list(p.values())[0]).lower()
+            services = services.replace(k + ': ' + 'False', k + ': ' + v)
+            services = services.replace(k + ': ' + 'True', k + ': ' + v)
+        listofservices = json.dumps(services, ensure_ascii=False)
+        listofservices = listofservices[1:-1]
+        listofservices.replace('True', 'true')
+        listofservices.replace('False', 'false')
+        listofservices = listofservices.replace("'",'"')
         with codecs.open("services.json", "w", "utf-8-sig") as temp:
             temp.write(listofservices)
             temp.close()
-        service.save()
+        re.sub(r'\'*\': False', '', services, count=0)
+        service.services = json.loads(listofservices)
+        service.save() 
         ls = service.services
+        lsc = []
         for s in ls:
-            if s['status'] == False:
-                ls.remove(s)
+            if s[list(s.keys())[-1]] == True:
+                lsc.append(s)
+            else:
+                continue
+            if len(lsc[-1]) > 1:
+                sc = lsc[-1][list(lsc[-1].keys())[0]]
+                myDict = {key:val for key, val in sc.items() if val != False}
+                lsc[-1][list(lsc[-1].keys())[0]] = myDict
         Window = Windows.objects.all()
         for i in Window:
-            if len(i.services) != len(ls):
-                i.services = ls
+            if len(i.services) != len(lsc):
+                i.services = lsc
                 i.save()
         return JsonResponse({}, status=200)
 
