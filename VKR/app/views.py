@@ -202,18 +202,26 @@ def nextbutton(request):
     t = datetime.now().date()
     window_id = request.session.get('window_id')
     if request.POST.get('click', False):
+        service = Windows.objects.get(operator = request.user).services
+        services = []
+        for ser in service:
+            if len(list(ser.keys())) > 1:
+                if ser[list(ser.keys())[1]] == True:
+                    services.append(list(ser.keys())[1])
+                subservice = ser[list(ser.keys())[0]]
+                for subser in subservice:
+                    if subservice[subser] == True:
+                        services.append(subser)
+            else:
+                if ser[list(ser.keys())[0]] == True:
+                    services.append(list(ser.keys())[0])
         if request.session.get('time_pause') != None:
             logwindow = LogWindows.objects.filter(window_id = window_id).last()
             tt = datetime.now()
             tt = tt.replace(hour = request.session.get('time_pause').get('hour'), minute = request.session.get('time_pause').get('minute'), second = request.session.get('time_pause').get('second'), microsecond = 0)
             logwindow.time_pause = datetime.now()-tt + logwindow.time_pause
             logwindow.save()
-            request.session['time_pause'] is None
-        service = Windows.objects.get(operator = request.user).services
-        services = []
-        for ser in service:
-            if ser['status'] == True:
-                services.append(ser['rusname'])
+            request.session['time_pause'] is None      
         if (Tickets.objects.filter(time_close = None).filter(window = request.session.get('window_id')).filter(status = 'Перенаправлен')):
             if (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = request.session.get('window_id')).exists() == True) and (request.session.get('Ticket_n') != None):
                 id=request.session.get('Ticket_n')
@@ -295,11 +303,19 @@ def nextbutton(request):
 def cancelbutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
-        service = Windows.objects.get(id_window = request.session.get('window_id')).services
+        service = Windows.objects.get(operator = request.user).services
         services = []
         for ser in service:
-            if ser['status'] == True:
-                services.append(ser['rusname'])
+            if len(list(ser.keys())) > 1:
+                if ser[list(ser.keys())[1]] == True:
+                    services.append(list(ser.keys())[1])
+                subservice = ser[list(ser.keys())[0]]
+                for subser in subservice:
+                    if subservice[subser] == True:
+                        services.append(subser)
+            else:
+                if ser[list(ser.keys())[0]] == True:
+                    services.append(list(ser.keys())[0])
         Ticket = (Tickets.objects.filter(id_ticket=request.session.get('Ticket_n')))[0]
         Ticket.time_close = datetime.now()
         Ticket.status = 'Отменен'
@@ -351,11 +367,19 @@ def breakbutton(request):
 def delaybutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
-        service = Windows.objects.get(id_window = request.session.get('window_id')).services
+        service = Windows.objects.get(operator = request.user).services
         services = []
         for ser in service:
-            if ser['status'] == True:
-                services.append(ser['rusname'])
+            if len(list(ser.keys())) > 1:
+                if ser[list(ser.keys())[1]] == True:
+                    services.append(list(ser.keys())[1])
+                subservice = ser[list(ser.keys())[0]]
+                for subser in subservice:
+                    if subservice[subser] == True:
+                        services.append(subser)
+            else:
+                if ser[list(ser.keys())[0]] == True:
+                    services.append(list(ser.keys())[0])
         Ticket = (Tickets.objects.filter(id_ticket=request.session.get('Ticket_n')))[0]
         Ticket.status = 'Отложен'
         ticket_r = Ticket.name_ticket
@@ -388,11 +412,6 @@ def delaybutton(request):
 def returnbutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
-        service = Windows.objects.get(id_window = request.session.get('window_id')).services
-        services = []
-        for ser in service:
-            if ser['status'] == True:
-                services.append(ser['rusname'])
         window_id = request.session.get('window_id')
         if request.session.get('Ticket_n') != None:
             id=request.session.get('Ticket_n')
@@ -432,11 +451,19 @@ def redbutton(request):
     t = datetime.now().date()
     if request.POST.get('click', False):
         red_window_id = request.POST.get("name")
-        service = Windows.objects.get(id_window = request.session.get('window_id')).services
+        service = Windows.objects.get(operator = request.user).services
         services = []
         for ser in service:
-            if ser['status'] == True:
-                services.append(ser['rusname'])
+            if len(list(ser.keys())) > 1:
+                if ser[list(ser.keys())[1]] == True:
+                    services.append(list(ser.keys())[1])
+                subservice = ser[list(ser.keys())[0]]
+                for subser in subservice:
+                    if subservice[subser] == True:
+                        services.append(subser)
+            else:
+                if ser[list(ser.keys())[0]] == True:
+                    services.append(list(ser.keys())[0])
         id=request.session.get('Ticket_n')
         Ticket = Tickets.objects.get(id_ticket=request.session.get('Ticket_n'))
         Ticket.window = Windows.objects.get(id_window=red_window_id)
@@ -464,7 +491,6 @@ def redbutton(request):
         minute = time.minute
         second = time.second
         return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
-
 
 # Экран лога талонов
 @login_required
