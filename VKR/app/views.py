@@ -519,18 +519,19 @@ def statisticstable(request):
             tc = p.time_create.time().strftime("%H:%M:%S")
             if p.time_call == None:
                 tca = ''
+                tservice = ''
             else:
                 tca = p.time_call.time().strftime("%H:%M:%S")
+                tservice = datetime.now() - p.time_call
             if p.time_close == None:
                 tcl = ''
             else:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
-
+                tservice = p.time_close - p.time_call
             if p.window_id == None:
                 iw = ''
             else:
                 iw = p.window_id
-
             if p.operator == None:
                 op = ''
             else:
@@ -544,7 +545,16 @@ def statisticstable(request):
                 second = p.time_pause.seconds%60
                 tpause = datetime.now().time()
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
-            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause])
+            if tservice != '':
+                tservice = tservice.seconds
+                s = tservice
+                hours = s // 3600 
+                s = s - (hours * 3600)
+                minutes = s // 60
+                seconds = s - (minutes * 60)
+                tservicef = datetime.now().time()
+                tservicef = tservicef.replace(hour = hours, minute = minutes, second = seconds, microsecond = 0).strftime("%H:%M:%S")
+            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause, tservicef, tservice])
         return JsonResponse({'listoftickets': listoftickets}, status=200)
     if request.GET.get('click2', False):
         date = request.GET.get('date').split(', ')
@@ -557,12 +567,15 @@ def statisticstable(request):
             tc = p.time_create.time().strftime("%H:%M:%S")
             if p.time_call == None:
                 tca = ''
+                tservice = ''
             else:
                 tca = p.time_call.time().strftime("%H:%M:%S")
+                tservice = datetime.now() - p.time_call
             if p.time_close == None:
                 tcl = ''
             else:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
+                tservice = p.time_close - p.time_call
             if p.window_id == None:
                 iw = ''
             else:
@@ -580,7 +593,16 @@ def statisticstable(request):
                 second = p.time_pause.seconds%60
                 tpause = datetime.now().time()
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
-            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause])
+            if tservice != '':
+                tservice = tservice.seconds
+                s = tservice
+                hours = s // 3600 
+                s = s - (hours * 3600)
+                minutes = s // 60
+                seconds = s - (minutes * 60)
+                tservicef = datetime.now().time()
+                tservicef = tservicef.replace(hour = hours, minute = minutes, second = seconds, microsecond = 0).strftime("%H:%M:%S")
+            listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause, tservicef, tservice])
         return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
 
 # Страница лога окон
@@ -611,9 +633,13 @@ def statisticstablew(request):
             if p.time_logout == None:
                 tlogout = ''
                 tservice = ''
+                tcount = Tickets.objects.filter(time_call__gte = p.time_login).filter(window_id = p.window_id).count()
+                taverage = Tickets.objects.filter(time_call__gte = p.time_login).filter(window_id = p.window_id)
             else:
                 tlogout = p.time_logout.time().strftime("%H:%M:%S")
                 tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
+                tcount = Tickets.objects.filter(time_call__gte = p.time_login).filter(time_call__lte = p.time_logout).filter(window_id = p.window_id).count()
+                taverage = Tickets.objects.filter(time_call__gte = p.time_login).filter(time_call__lte = p.time_logout).filter(window_id = p.window_id)
             if p.time_pause == timedelta(0):
                 tpause = ''
             else:
@@ -623,7 +649,18 @@ def statisticstablew(request):
                 second = p.time_pause.seconds%60
                 tpause = datetime.now().time()
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
-            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause])
+            taverage = taverage.aggregate(average_difference=Avg(F('time_close') - F('time_call')))
+            if taverage.get('average_difference') is None:
+                taverage = ""
+            else:
+                s = taverage.get('average_difference').seconds
+                hours = s // 3600 
+                s = s - (hours * 3600)
+                minutes = s // 60
+                seconds = s - (minutes * 60)
+                taverage = datetime.now().time()
+                taverage = taverage.replace(hour = hours, minute = minutes, second = seconds, microsecond = 0).strftime("%H:%M:%S")
+            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause, tcount, taverage, s])
         return JsonResponse({'listoflogwindows': listoflogwindows}, status=200)
     if request.GET.get('click2', False):
         date = request.GET.get('date').split(', ')
@@ -637,9 +674,13 @@ def statisticstablew(request):
             if p.time_logout == None:
                 tlogout = ''
                 tservice = ''
+                tcount = Tickets.objects.filter(time_call__gte = p.time_login).filter(window_id = p.window_id).count()
+                taverage = Tickets.objects.filter(time_call__gte = p.time_login).filter(time_call__lte = p.time_logout).filter(window_id = p.window_id)
             else:
                 tlogout = p.time_logout.time().strftime("%H:%M:%S")
                 tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
+                tcount = Tickets.objects.filter(time_call__gte = p.time_login).filter(time_call__lte = p.time_logout).filter(window_id = p.window_id).count()
+                taverage = Tickets.objects.filter(time_call__gte = p.time_login).filter(time_call__lte = p.time_logout).filter(window_id = p.window_id)
             if p.time_pause == timedelta(0):
                 tpause = ''
             else:
@@ -649,7 +690,18 @@ def statisticstablew(request):
                 second = p.time_pause.seconds%60
                 tpause = datetime.now().time()
                 tpause = tpause.replace(hour = hour, minute = minute, second = second, microsecond = 0).strftime("%H:%M:%S")
-            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause])
+            taverage = taverage.aggregate(average_difference=Avg(F('time_close') - F('time_call')))
+            if taverage.get('average_difference') is None:
+                taverage = ""
+            else:
+                s = taverage.get('average_difference').seconds
+                hours = s // 3600 
+                s = s - (hours * 3600)
+                minutes = s // 60
+                seconds = s - (minutes * 60)
+                taverage = datetime.now().time()
+                taverage = taverage.replace(hour = hours, minute = minutes, second = seconds, microsecond = 0).strftime("%H:%M:%S")
+            listoflogwindows.append([p.window_id,p.operator.last_name + ' (' + p.operator.username + ')', tlogin, tlogout, tservice, tpause, tcount, taverage, s])
         return JsonResponse({'date': date, 'listoflogwindows': listoflogwindows}, status=200)
 
 # Страница общей статистики
@@ -675,8 +727,10 @@ def statisticstableall(request):
         service = Services.objects.latest('id_services').services
         services = []
         for ser in service:
-            if ser['status'] == True:
-                services.append(ser['rusname'])
+            if len(list(ser.keys())) > 1:
+                subservice = ser[list(ser.keys())[0]]
+                for subser in subservice:
+                    services.append(subser)
         if request.GET.get('date') is None:
             t = datetime.now().strftime("%Y")
         else:

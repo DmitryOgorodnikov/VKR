@@ -34,15 +34,22 @@ $(document).ready(function () {
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
             arr = response.listoflogwindows;
-            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th><th>Время пауз</th>');
+            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время работы</th><th>Время пауз</th><th>Число талонов</th><th>Среднее время обслуживания</th>');
             arr.forEach(function (item, i, arr) {
+                var classname = ''
+                if (item[8] > 600)
+                    classname = 'red'
+                else if (item[8] > 300)
+                    classname = 'yellow'
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>' +
                     '<td>' + item[2] + '</td>' +
                     '<td>' + item[3] + '</td>' +
                     '<td>' + item[4] + '</td>' +
                     '<td>' + item[5] + '</td>' +
-                    '</tr > ');
+                    '<td>' + item[6] + '</td>' +
+                    '<td class="' + classname +'">' + item[7] + '</td>' +
+                    '</tr>');
             });
         }
     });
@@ -87,15 +94,22 @@ $('table').on('click', '.settings-btn', function () {
                 '<td><button type="button" class="settings-btn" name="' + date2.getFullYear() + ', ' + date2.getMonth() + ', ' + date2.getDate() + '">' + arr[4] + '</button></td>' +
                 '</tr>');
             arr = response.listoflogwindows;
-            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время обслуживания</th><th>Время пауз</th>');
+            $('.stattable').prepend('<th>Окно</th><th>Оператор</th><th>Время входа</th><th>Время выхода</th><th>Время работы</th><th>Время пауз</th><th>Число талонов</th><th>Среднее время обслуживания</th>');
             arr.forEach(function (item, i, arr) {
+                var classname = ''
+                if (item[8] > 600)
+                    classname = 'red'
+                else if (item[8] > 300)
+                    classname = 'yellow'
                 $('.stattable').prepend('<tr><td>' + item[0] + '</td>' +
                     '<td>' + item[1] + '</td>' +
                     '<td>' + item[2] + '</td>' +
                     '<td>' + item[3] + '</td>' +
                     '<td>' + item[4] + '</td>' +
                     '<td>' + item[5] + '</td>' +
-                    '</tr > ');
+                    '<td>' + item[6] + '</td>' +
+                    '<td class="' + classname +'">' + item[7] + '</td>' +
+                    '</tr>');
             });
         }
     });

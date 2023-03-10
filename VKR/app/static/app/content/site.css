@@ -283,8 +283,8 @@ input[type="checkbox"].input-validation-error {
 }
 
 .statistics-div-chld-two {
-    width: 85%;
-    height: 580px;
+    width: 95%;
+    height: 1000px;
     position: absolute;
     top: 13px;
     bottom: 0%;
@@ -824,4 +824,12 @@ fieldset[disabled] .settings-btn {
 
 .logo-margin-top{
     margin-top: 100px;
+}
+
+.yellow {
+    background-color: #F0E68C;
+}
+
+.red {
+    background-color: #FF7F50;
 }

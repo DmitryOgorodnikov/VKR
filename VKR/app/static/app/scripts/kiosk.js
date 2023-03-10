@@ -50,7 +50,7 @@ $('.kiosk-div').on('click', '#buttonservice', function () {
     $('.kiosk-h2').html(name);
     $('.kiosk-div').empty();
     var id = services.findIndex(el => Object.keys(el)[1] == name || Object.keys(el)[0] == name);
-    var arr = services[id].Услуги;
+    var arr = services[id].Services;
     for (var prop in arr) {
         if (arr[prop] != true)
             delete arr[prop];
