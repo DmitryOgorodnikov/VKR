@@ -26,6 +26,7 @@ urlpatterns = [
              }
          ),
          name='login'),
+    path('operatorbutton', views.operatorbutton, name='operatorbutton'),
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
     # Пульт оператора
     path('service/', views.service, name='service'),
