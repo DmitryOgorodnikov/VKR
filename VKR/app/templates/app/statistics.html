@@ -13,7 +13,7 @@
             <p class="index-center">{{user.get_username}}</p>
         </div>
         <div class="nav-block1 nav-block3">
-            <a class="btn btn-default btn-index" href="{% url 'logout' %}">Выйти</a>
+            <a class="btn btn-default btn-index" id="Logout">Выйти</a>
         </div>
     </div>
 </nav>
@@ -34,7 +34,7 @@
         </form>
         <form id="csrf" action="" method="POST">
             {% csrf_token %}
-            <input type="button" id="sheetjsexport" value="Выгрузить в Excel" class="settings-btn settings-btn-excel" id="export">
+            <input type="button" id="sheetjsexport" value="Выгрузить в Excel" class="settings-btn settings-btn-excel">
         </form>
     </div>
 </div>

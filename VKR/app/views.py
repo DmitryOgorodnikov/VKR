@@ -177,23 +177,24 @@ def operator(request):
         }
     )
 
-# Кнопка для смены окна
+# Функция, что закрывает сессию пользователя на окне, если она есть.
 @login_required
 def operatorbutton(request):
     window_id = request.session.get('window_id')
     if request.GET.get('click', False):
-        window = Windows.objects.get(operator = request.user)
-        window.operator_id = None
-        window.save()
-        logwindow = LogWindows.objects.filter(window_id = window.id_window).last()
-        logwindow.time_logout = datetime.now()
-        logwindow.save()
-        if Tickets.objects.filter(window_id=window.id_window).filter(time_close = None).exists():
-            Ticket = Tickets.objects.get(window_id=window.id_window, time_close = None)
-            Ticket.time_close = datetime.now()
-            Ticket.status = 'Закрыт'
-            Ticket.save()
-        request.session['window_id'] = None
+        if Windows.objects.filter(operator = request.user).exists():
+            window = Windows.objects.get(operator = request.user)
+            window.operator_id = None
+            window.save()
+            logwindow = LogWindows.objects.filter(window_id = window.id_window).last()
+            logwindow.time_logout = datetime.now()
+            logwindow.save()
+            if Tickets.objects.filter(window_id=window.id_window).filter(time_close = None).exists():
+                Ticket = Tickets.objects.get(window_id=window.id_window, time_close = None)
+                Ticket.time_close = datetime.now()
+                Ticket.status = 'Закрыт'
+                Ticket.save()
+            request.session['window_id'] = None
         return JsonResponse({}, status=200)
 
 # Кнопка "Следующий"
@@ -554,6 +555,8 @@ def statisticstable(request):
                 seconds = s - (minutes * 60)
                 tservicef = datetime.now().time()
                 tservicef = tservicef.replace(hour = hours, minute = minutes, second = seconds, microsecond = 0).strftime("%H:%M:%S")
+            else:
+                tservicef=''
             listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause, tservicef, tservice])
         return JsonResponse({'listoftickets': listoftickets}, status=200)
     if request.GET.get('click2', False):
@@ -602,6 +605,8 @@ def statisticstable(request):
                 seconds = s - (minutes * 60)
                 tservicef = datetime.now().time()
                 tservicef = tservicef.replace(hour = hours, minute = minutes, second = seconds, microsecond = 0).strftime("%H:%M:%S")
+            else:
+                tservicef=''
             listoftickets.append([p.name_ticket, p.service, p.status, tc, tca, tcl, iw, op, tpause, tservicef, tservice])
         return JsonResponse({'date': date, 'listoftickets': listoftickets}, status=200)
 

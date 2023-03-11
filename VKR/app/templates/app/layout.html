@@ -17,11 +17,13 @@
     <div class="container body-content">
         {% block content %}{% endblock %}
     </div>
-    {% load static %}
+
+{% load static %}
     <script src="{% static 'app/scripts/jquery-1.10.2.js' %}"></script>
     <script src="{% static 'app/scripts/bootstrap.js' %}"></script>
     <script src="{% static 'app/scripts/respond.js' %}"></script>
-    {% block scripts %}{% endblock %}
+    <script src="{% static 'app/scripts/exit.js'%}"></script>
+{% block scripts %}{% endblock %}
 
 </body>
 </html>

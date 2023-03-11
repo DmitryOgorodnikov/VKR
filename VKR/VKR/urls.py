@@ -1,6 +1,6 @@
 # Пути для HTTP
 from datetime import datetime
-from django.urls import path
+from django.urls import path, re_path
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from app import forms, views
@@ -31,7 +31,7 @@ urlpatterns = [
     path('service/', views.service, name='service'),
     path('service/windowbutton', views.windowbutton, name='windowbutton'),
     path('service/operator/', views.operator, name='operator'),
-    path('service/operator/operatorbutton', views.operatorbutton, name='operatorbutton'),
+    re_path(r'^.+operatorbutton.+$', views.operatorbutton, name='operatorbutton'),
     path('service/operator/nextbutton', views.nextbutton, name='nextbutton'),
     path('service/operator/cancelbutton', views.cancelbutton, name='cancelbutton'),
     path('service/operator/breakbutton', views.breakbutton, name='breakbutton'),

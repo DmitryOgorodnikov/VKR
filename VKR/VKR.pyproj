@@ -69,6 +69,7 @@
     <Content Include="app\static\app\scripts\kiosk.js" />
     <Content Include="app\static\app\scripts\modal.js" />
     <Content Include="app\static\app\scripts\myset.js" />
+    <Content Include="app\static\app\scripts\exit.js" />
     <Content Include="app\static\app\scripts\operator.js" />
     <Content Include="app\static\app\scripts\service.js" />
     <Content Include="app\static\app\scripts\settings.js" />
