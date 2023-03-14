@@ -22,7 +22,11 @@
         <p class="index-center"><a class="settings-btn" href="{% url 'settings' %}">Учетные записи</a></p>
         <p class="index-center"><a class="settings-btn btn-def" href="{% url 'settingsw' %}">Окна</a></p>
         <p class="index-center"><a class="settings-btn" href="{% url 'settingso' %}">ОПС</a></p>
+        {% if request.user.is_staff %}
         <p class="index-center"><a class="settings-btn" href="{% url 'settingsm' %}">Настройки</a></p>
+        {% else %}
+        <p class="index-center"><a class="settings-btn" href="{% url 'settingsm' %}" disabled>Настройки (Только Администратор)</a></p>
+        {% endif %}
         <p class="index-center"><a class="settings-btn return-btn" href="{% url 'home' %}">Вернуться</a></p>
     </div>
 
