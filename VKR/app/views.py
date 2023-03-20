@@ -526,7 +526,7 @@ def statisticstable(request):
                 tservice = datetime.now() - p.time_call
             if p.time_close == None:
                 tcl = ''
-            else:
+            if p.time_close != None and p.time_call != None:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
                 tservice = p.time_close - p.time_call
             if p.window_id == None:
@@ -576,7 +576,7 @@ def statisticstable(request):
                 tservice = datetime.now() - p.time_call
             if p.time_close == None:
                 tcl = ''
-            else:
+            if p.time_close != None and p.time_call != None:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
                 tservice = p.time_close - p.time_call
             if p.window_id == None:
