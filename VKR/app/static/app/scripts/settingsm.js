@@ -8,14 +8,14 @@ $(document).ready(function () {
         success: function (response) {
             opsname = response.opsname;
             printcheck = response.printcheck;
-            $('table').prepend('<tr><td class="table1w" name="opsname"> Номер ОПС: </td>' +
-                '<td class="table1w" name="opsname">' + '<input type="text" id="opsname" class="form-control" value="' + opsname +'" ></td>' +
+            $('table').prepend('<tr><td class="table1m" name="opsname"> Номер ОПС: </td>' +
+                '<td class="table1w" name="opsname">' + '<input type="text" id="opsname" class="form-control name-ops" value="' + opsname +'" ></td>' +
                 '</tr > ');
             if (printcheck == true)
                 ch = 'checked'
             else
                 ch = ''
-            $('table').append('<tr><td class="table1w" name="printcheck"> Печать талонов: </td>' +
+            $('table').append('<tr><td class="table1m" name="printcheck"> Печать талонов: </td>' +
                 '<td class="table1w" name="printcheck">' + '<input type="checkbox" ' + ch + ' id="printcheck">' + '</td>' +
                 '</tr > ');
         }

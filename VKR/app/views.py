@@ -13,7 +13,6 @@ from django.contrib.sessions.models import Session
 import json
 import codecs
 import re
-import array
 
 # Страница киоска
 def kiosk(request):
@@ -423,7 +422,6 @@ def returnbutton(request):
             Ticket.save()
         Ticket = Tickets.objects.filter(status = 'Отложен').filter(window = window_id).earliest('id_ticket')
         Ticket.time_pause += datetime.now() - Ticket.time_call.replace(tzinfo=None)
-        Ticket.time_call = datetime.now()
         Ticket.status = 'Вызван'
         Ticket.save()
         ticket = 'Текущий талон: ' + Ticket.name_ticket
@@ -442,7 +440,7 @@ def redirectbutton(request):
     if request.POST.get('click', False):
         windows_l = []
         if Windows.objects.exclude(operator = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window').exists():
-            for l in Windows.objects.exclude(id_window = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window'):
+            for l in Windows.objects.exclude(operator_id = None).exclude(id_window = request.session.get('window_id')).values_list('id_window').order_by('id_window'):
                 windows_l.append(l[0])
         return JsonResponse({"windows_l": windows_l}, status=200)
 
@@ -529,6 +527,8 @@ def statisticstable(request):
             if p.time_close != None and p.time_call != None:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
                 tservice = p.time_close - p.time_call
+            elif p.time_close != None:
+                tcl = p.time_close.time().strftime("%H:%M:%S")
             if p.window_id == None:
                 iw = ''
             else:
@@ -579,6 +579,8 @@ def statisticstable(request):
             if p.time_close != None and p.time_call != None:
                 tcl = p.time_close.time().strftime("%H:%M:%S")
                 tservice = p.time_close - p.time_call
+            elif p.time_close != None:
+                tcl = p.time_close.time().strftime("%H:%M:%S")
             if p.window_id == None:
                 iw = ''
             else:
@@ -657,6 +659,7 @@ def statisticstablew(request):
             taverage = taverage.aggregate(average_difference=Avg(F('time_close') - F('time_call')))
             if taverage.get('average_difference') is None:
                 taverage = ""
+                s = 0
             else:
                 s = taverage.get('average_difference').seconds
                 hours = s // 3600 
@@ -680,7 +683,7 @@ def statisticstablew(request):
                 tlogout = ''
                 tservice = ''
                 tcount = Tickets.objects.filter(time_call__gte = p.time_login).filter(window_id = p.window_id).count()
-                taverage = Tickets.objects.filter(time_call__gte = p.time_login).filter(time_call__lte = p.time_logout).filter(window_id = p.window_id)
+                taverage = Tickets.objects.filter(time_call__gte = p.time_login).filter(window_id = p.window_id)
             else:
                 tlogout = p.time_logout.time().strftime("%H:%M:%S")
                 tservice = (datetime.min + (p.time_logout - p.time_login)).time().strftime("%H:%M:%S")
@@ -698,6 +701,7 @@ def statisticstablew(request):
             taverage = taverage.aggregate(average_difference=Avg(F('time_close') - F('time_call')))
             if taverage.get('average_difference') is None:
                 taverage = ""
+                s = 0
             else:
                 s = taverage.get('average_difference').seconds
                 hours = s // 3600 

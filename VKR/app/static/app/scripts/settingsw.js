@@ -25,6 +25,8 @@ $(document).ready(function () {
                             '</tr > ');
                 else
                     $('table').prepend('<tr><td class="table1 table5">Окно: ' + response.window[i][0] + '</td>' +
+                        '<td class="table6"></td>' +
+                        '<td class="table4"></td>' +
                         '<td class="table4"> <input type="button" class="btn btn-default btn-index change" name= "' + response.window[i][0] + '" value="Настроить" id="windowchange"></td>' +
                         '<td class="table4"> <input type="button" class="btn btn-default btn-index op" name= "' + response.window[i][0] + '" value="Включить" id="windowstatus"></td>' +
                         '</tr > ');

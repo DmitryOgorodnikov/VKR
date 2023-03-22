@@ -18,7 +18,7 @@ https://docs.djangoproject.com/en/2.1/howto/deployment/wsgi/
 
 import os
 from django.core.wsgi import get_wsgi_application
-from app.models import Windows, Services, Tickets
+from app.models import Windows, Services, Tickets, LogWindows
 from datetime import datetime
 import json
 
@@ -46,15 +46,29 @@ with open('services.json', 'r', encoding='utf-8-sig') as f:
             i.services = ls
             i.save()
 
-    t = datetime.now().date()
-    if Tickets.objects.exclude(time_create__contains = t).filter(time_close = None).exists() != False:
-        ticketslist = Tickets.objects.exclude(time_create__contains = t).filter(time_close = None)
-        for t in ticketslist:
-            t.status = 'Истек'
-            tm = datetime.now()
-            tm = tm.replace(hour=0,minute=0,second=0,microsecond=0)
-            t.time_close = tm
-            t.save()
+
+t = datetime.now().date()
+tt = datetime.now()
+
+if Tickets.objects.exclude(time_create__contains = t).filter(time_close = None).exists() != False:
+    ticketslist = Tickets.objects.exclude(time_create__contains = t).filter(time_close = None)
+    for t in ticketslist:
+        t.status = 'Истек'
+        tm = datetime.now()
+        tm = t.time_create
+        tm = tm.replace(hour=23,minute=59,second=59,microsecond=0)
+        t.time_close = tm
+        t.save()
+
+if LogWindows.objects.exclude(time_login__contains = t).filter(time_logout = None).exists() != False:
+    logwindowslist = LogWindows.objects.exclude(time_login__contains = t).filter(time_logout = None)
+    for l in logwindowslist:
+        l.time_logout = l.time_login.replace(hour=23,minute=59,second=59,microsecond=0)
+        l.save()
+        newses = LogWindows.objects.create(id_log = LogWindows.objects.all().count(), operator_id = l.operator_id, window_id = l.window_id, time_login = tt)
+
+
+
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION

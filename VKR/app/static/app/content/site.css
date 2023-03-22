@@ -62,6 +62,11 @@ input[type="checkbox"].input-validation-error {
     margin-right: auto;
 }
 
+.name-ops {
+    margin-left: 0px;
+    margin-right: auto;
+}
+
 .col-md-10 {
     width: 100%;
 }
@@ -415,6 +420,11 @@ input[type="checkbox"].input-validation-error {
 .table1wcd {
     left: 20px;
     position:relative;
+}
+
+.table1m {
+    width: 200px;
+    position: relative;
 }
 
 .left20{
