@@ -740,6 +740,9 @@ def statisticstableall(request):
                 subservice = ser[list(ser.keys())[0]]
                 for subser in subservice:
                     services.append(subser)
+            else:
+                subservice = list(ser.keys())[0]
+                services.append(subservice)
         if request.GET.get('date') is None:
             t = datetime.now().strftime("%Y")
         else:
