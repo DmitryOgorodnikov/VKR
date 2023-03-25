@@ -221,11 +221,12 @@ def nextbutton(request):
             tt = tt.replace(hour = request.session.get('time_pause').get('hour'), minute = request.session.get('time_pause').get('minute'), second = request.session.get('time_pause').get('second'), microsecond = 0)
             logwindow.time_pause = datetime.now()-tt + logwindow.time_pause
             logwindow.save()
-            request.session['time_pause'] is None      
+            request.session['time_pause'] = None      
         if (Tickets.objects.filter(time_close = None).filter(window = request.session.get('window_id')).filter(status = 'Перенаправлен')):
-            if (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = request.session.get('window_id')).exists() == True) and (request.session.get('Ticket_n') != None):
+            if (Tickets.objects.exclude(status = 'Перенаправлен').filter(time_create__contains = t).filter(time_close = None).filter(window = request.session.get('window_id')).exists() == True) and (request.session.get('Ticket_n') != None):
                 id=request.session.get('Ticket_n')
-                Ticket = Tickets.objects.get(id_ticket=request.session.get('Ticket_n'))
+                Ticket = Tickets.objects.get(id_ticket=id)
+                request.session['Ticket_n'] = None
                 Ticket.time_close = datetime.now()
                 Ticket.status = 'Закрыт'
                 Ticket.operator = User.objects.get(id = request.user.id)
@@ -246,7 +247,7 @@ def nextbutton(request):
             minute = time.minute
             second = time.second
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
-        elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and (Tickets.objects.filter(time_create__contains = t).exclude(status = 'Отложен').filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
+        elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and request.session['Ticket_n'] == None and (Tickets.objects.filter(time_create__contains = t).exclude(status = 'Отложен').filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга:'
             request.session['ticket'] = ticket
