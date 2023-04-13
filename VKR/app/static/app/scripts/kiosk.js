@@ -83,6 +83,7 @@ $('.kiosk-div').on('click', '#buttonticket', function () {
                     title: 'Номер вашего талона',
                     content: '<p>' + response.ticketname + '</p>' + '<p class="warning">' + 'Запомните номер талона!' + '</p>',
                 });
+            $('#print-text')[0].innerHTML = response.ticketname;
             modal.show();
             setTimeout(() => { modal.hide(); }, 10000);
 

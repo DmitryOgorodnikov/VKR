@@ -35,6 +35,7 @@ $('table').on('click', '.settings-btn', function () {
 
 
 var charts = function (response) {
+    Chart.defaults.global.defaultFontColor = 'black';
     var ctx1 = document.getElementById('myChart1').getContext('2d');
     var myChart1 = new Chart(ctx1, {
         type: 'bar',
@@ -225,8 +226,7 @@ var charts = function (response) {
             scales: {
                 yAxes: [{
                     ticks: {
-                        min: 0,
-                        stepSize: 1
+                        min: 0
                     }
                 }],
                 xAxes: [{

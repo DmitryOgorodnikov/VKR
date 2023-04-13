@@ -26,7 +26,7 @@ textarea {
 }
 
 input.input-validation-error {
-    border: 1px solid #b94a48;
+    border: 2px solid #b94a48;
 }
 
 input[type="checkbox"].input-validation-error {
@@ -97,7 +97,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .btn-index {
-    width: 130px;
+    width: 147px;
     margin-right: 5px;
 }
 
@@ -141,8 +141,7 @@ input[type="checkbox"].input-validation-error {
     left: 15%;
     background-color: #f8f9fa;
     border-width: 2px;
-    border-color: #ccc;
-    border: 1px solid rgba(0,0,0,.125);
+    border: 2px solid rgba(0,0,0, 255);
     border-radius: 10px;
     text-align: center;
     padding-top: 200px;
@@ -158,7 +157,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .windows-btn {
-    width: 100px;
+    width: 110px;
     position: relative;
     top: -4px;
     text-align: center;
@@ -166,17 +165,16 @@ input[type="checkbox"].input-validation-error {
     padding: 6px 12px;
     margin-bottom: 0px;
     margin-left: 5px;
-    font-size: 14px;
-    font-weight: normal;
+    font-size: 16px;
+    font-weight: bold;
     line-height: 1.428571429;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 4px;
     color: #333333;
     background-color: #ffffff;
-    border-color: #cccccc;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -195,7 +193,7 @@ input[type="checkbox"].input-validation-error {
     color: #333333;
     text-decoration: none;
     background-color: #ebebeb;
-    border-color: #adadad;
+    border-color: rgba(0,0,0,255);
 }
 
 .windows-btn-hidden {
@@ -226,11 +224,10 @@ input[type="checkbox"].input-validation-error {
     margin-bottom: 20px;
     text-align: center;
     padding-top: 25px;
-    border: 1px solid transparent;
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 4px;
     color: #333333;
     background-color: #ffffff;
-    border-color: #cccccc;
 }
 
 .operator-div2 {
@@ -280,8 +277,7 @@ input[type="checkbox"].input-validation-error {
     left: 4%;
     background-color: #f8f9fa;
     border-width: 2px;
-    border-color: #ccc;
-    border: 1px solid rgba(0,0,0,.125);
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 10px;
     padding-top: 20px;
     padding-left: 5px;
@@ -305,7 +301,7 @@ input[type="checkbox"].input-validation-error {
 
 .settings-div-chld {
     width: 25%;
-    height: 260px;
+    height: 270px;
     position: absolute;
     top: 2%;
     bottom: 0%;
@@ -313,8 +309,7 @@ input[type="checkbox"].input-validation-error {
     left: 4%;
     background-color: #f8f9fa;
     border-width: 2px;
-    border-color: #ccc;
-    border: 1px solid rgba(0,0,0,.125);
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 10px;
     padding-top: 20px;
     padding-left: 5px;
@@ -330,8 +325,7 @@ input[type="checkbox"].input-validation-error {
     left: 30%;
     background-color: #ffffff;
     border-width: 2px;
-    border-color: #ccc;
-    border: 1px solid rgba(0,0,0,.125);
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 10px;
     text-align: center;
     padding-top: 200px;
@@ -367,7 +361,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .settings-div-chld-4 tr {
-    border: 1px solid rgba(0,0,0,.125);
+    border: 2px solid rgba(0,0,0,255);
     padding-top: 4px;
     padding-bottom: 4px;
     width: 100%;
@@ -391,7 +385,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .settings-div-chld-4c tr {
-    border: 1px solid rgba(0,0,0,.125);
+    border: 2px solid rgba(0,0,0,255);
     padding-top: 4px;
     padding-bottom: 4px;
     width: 100%;
@@ -479,16 +473,15 @@ input[type="checkbox"].input-validation-error {
     padding: 6px 12px;
     margin-bottom: 0px;
     font-size: 14px;
-    font-weight: normal;
+    font-weight: bold;
     line-height: 1.428571429;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 4px;
     color: #333333;
     background-color: #ffffff;
-    border-color: #cccccc;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -497,7 +490,7 @@ input[type="checkbox"].input-validation-error {
 }
 
 .settings-btn-excel {
-    width: 145px;
+    width: 152px;
     margin-top: 10px;
 }
 
@@ -548,7 +541,7 @@ fieldset[disabled] .settings-btn {
 .btn-def {
     color: #333333;
     background-color: #ebebeb;
-    border-color: #adadad;
+    border-color: rgba(0,0,0, 255);
 }
 
 .settings-btn-cr {
@@ -559,16 +552,15 @@ fieldset[disabled] .settings-btn {
     margin-bottom: 0px;
     margin-top: 1px;
     font-size: 14px;
-    font-weight: normal;
+    font-weight: bold;
     line-height: 1.428571429;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 4px;
     color: #333333;
     background-color: #ffffff;
-    border-color: #cccccc;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -584,16 +576,15 @@ fieldset[disabled] .settings-btn {
     margin-bottom: 0px;
     margin-top: 1px;
     font-size: 14px;
-    font-weight: normal;
+    font-weight: bold;
     line-height: 1.428571429;
     white-space: nowrap;
     vertical-align: middle;
     cursor: pointer;
-    border: 1px solid transparent;
+    border: 2px solid rgba(0,0,0,255);
     border-radius: 4px;
     color: #333333;
     background-color: #ffffff;
-    border-color: #cccccc;
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -725,8 +716,9 @@ fieldset[disabled] .settings-btn {
 }
 
 .nav-block1-operator {
-    width: 55px;
+    width: 60px;
     margin-left: 0px;
+    margin-right: 5px;
 }
 
 .nav-block1 p {
@@ -770,14 +762,13 @@ fieldset[disabled] .settings-btn {
 
 .stattable {
     width: 100%;
-    border: 1px solid rgba(0,0,0,.125);
-    border-color: #ccc;
+    border: 2px solid rgba(0,0,0,255);
     font-size: 16px;
 }
 
     .stattable th {
         height: 25px;
-        border: 1px solid rgba(0,0,0,.125);
+        border: 2px solid rgba(0,0,0,255);
         padding-left: 5px;
         padding-right: 5px;
         vertical-align: middle;
@@ -785,7 +776,7 @@ fieldset[disabled] .settings-btn {
 
     .stattable td {
         height: 70px;
-        border: 1px solid rgba(0,0,0,.125);
+        border: 2px solid rgba(0,0,0,255);
         text-align: left;
         padding-left: 5px;
         padding-right: 5px;

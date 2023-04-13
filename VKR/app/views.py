@@ -49,26 +49,26 @@ def kbutton(request):
         name = name.split()
         if len(name) == 3:
             name = list(name[0])[0] + list(name[1])[0] + list(name[2])[0]
-            if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').exists() == False:
+            if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r'^'+ name +'\s...').exists() == False:
                 r = name + ' 001'
             else:
-                r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').latest("id_ticket").name_ticket
+                r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r'^'+ name +'\s...').latest("id_ticket").name_ticket
                 x = int(r[-3:]) + 1
                 r = r[0:3] + ' ' + str(f'{x:03}')
         elif len(name) == 2:
             name = list(name[0])[0] + list(name[1])[0]
-            if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').exists() == False:
+            if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r'^'+ name +'\s...').exists() == False:
                 r = name + ' 001'
             else:
-                r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').latest("id_ticket").name_ticket
+                r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r'^'+ name +'\s...').latest("id_ticket").name_ticket
                 x = int(r[-3:]) + 1
                 r = r[0:2] + ' ' + str(f'{x:03}')
         else:
             name = list(name[0])[0]
-            if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').exists() == False:
+            if Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r'^'+ name +'\s...').exists() == False:
                 r = name + ' 001'
             else:
-                r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r''+ name +'\s...').latest("id_ticket").name_ticket
+                r = Tickets.objects.filter(time_create__contains = t).filter(name_ticket__iregex=r'^'+ name +'\s...').latest("id_ticket").name_ticket
                 x = int(r[-3:]) + 1
                 r = r[0:1] + ' ' + str(f'{x:03}')
         Ticket.name_ticket = r
@@ -247,12 +247,12 @@ def nextbutton(request):
             minute = time.minute
             second = time.second
             return JsonResponse({"ticket": ticket, 'service': service, "hour": hour, "minute": minute, "second": second}, status=200)
-        elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and request.session['Ticket_n'] == None and (Tickets.objects.filter(time_create__contains = t).exclude(status = 'Отложен').filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
+        elif (Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists() == False) and ('Ticket_n' not in request.session or request.session.get('Ticket_n') == None) and (Tickets.objects.filter(time_create__contains = t).exclude(status = 'Отложен').filter(time_close = None).filter(window = request.session.get('window_id')).filter(service__in = services).exists() == False):
             ticket = 'Текущий талон: Нет талонов в очереди'
             service = 'Услуга:'
             request.session['ticket'] = ticket
             return JsonResponse({"ticket": ticket, 'service': service}, status=200)
-        elif request.session.get('Ticket_n') is None:
+        elif request.session.get('Ticket_n') is None and Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).exists():
             window_id = request.session.get('window_id')
             Ticket = Tickets.objects.filter(time_create__contains = t).filter(time_close = None).filter(window = None).filter(service__in = services).earliest('id_ticket')
             Ticket.window = Windows.objects.get(operator = request.user)
